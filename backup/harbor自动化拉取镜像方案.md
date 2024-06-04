@@ -9,6 +9,9 @@ cat images.list
 
 curl https://192.168.2.250:443/api/version  -k
 {"version":"v2.0"}
+![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/2390402e-6803-45a1-bf0d-e99f0347395d)
+
+
 
 ```shell
 #!/bin/bash
