@@ -9,8 +9,7 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content="
-grep data_volume  /app/harbor/harbor.yml    #根据配置文件查找数据存储目录
+<meta name="description" content="grep data_volume  /app/harbor/harbor.yml    #根据配置文件查找数据存储目录
 data_volume: /data
 
 cd /data/registry     #进入到Harbor的数据目录下
@@ -22,7 +21,7 @@ cat images.list
 curl https://192.168.2.250:443/api/version  -k
 {'version':'v2.0'}
 
-`
+
 #!/bin/bash
 Harbor_Address=172.16.1.200       #Harbor主机地址
 Harbor_User=admin                      #登录Harbor的用户
@@ -58,11 +57,10 @@ for image_tag in $Image_tags;do
     docker rmi  $image_tag
     mv $image_Name.tar  $Tar_File
 done
-`
+
 。">
 <meta property="og:title" content="harbor自动化拉取镜像方案">
-<meta property="og:description" content="
-grep data_volume  /app/harbor/harbor.yml    #根据配置文件查找数据存储目录
+<meta property="og:description" content="grep data_volume  /app/harbor/harbor.yml    #根据配置文件查找数据存储目录
 data_volume: /data
 
 cd /data/registry     #进入到Harbor的数据目录下
@@ -74,7 +72,7 @@ cat images.list
 curl https://192.168.2.250:443/api/version  -k
 {'version':'v2.0'}
 
-`
+
 #!/bin/bash
 Harbor_Address=172.16.1.200       #Harbor主机地址
 Harbor_User=admin                      #登录Harbor的用户
@@ -110,7 +108,7 @@ for image_tag in $Image_tags;do
     docker rmi  $image_tag
     mv $image_Name.tar  $Tar_File
 done
-`
+
 。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://donkeytt11111.github.io/jiaxin.github.io/post/harbor-zi-dong-hua-la-qu-jing-xiang-fang-an.html">
@@ -177,8 +175,7 @@ data_volume: /data</p>
 <p>cat images.list</p>
 <p>curl <a href="https://192.168.2.250:443/api/version" rel="nofollow">https://192.168.2.250:443/api/version</a>  -k<br>
 {"version":"v2.0"}</p>
-<p>`<br>
-#!/bin/bash<br>
+<p>#!/bin/bash<br>
 Harbor_Address=172.16.1.200       #Harbor主机地址<br>
 Harbor_User=admin                      #登录Harbor的用户<br>
 Harbor_Passwd=Harbor12345              #登录Harbor的用户密码<br>
@@ -212,8 +209,7 @@ docker save $image_tag  -o $image_Name.tar<br>
 docker rmi  172.16.1.200/$image_tag<br>
 docker rmi  $image_tag<br>
 mv $image_Name.tar  $Tar_File<br>
-done<br>
-`</p></div>
+done</p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
 <div class="comments" id="comments"></div>

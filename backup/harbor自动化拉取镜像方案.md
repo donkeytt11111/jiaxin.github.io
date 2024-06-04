@@ -1,4 +1,3 @@
-
 grep data_volume  /app/harbor/harbor.yml    #根据配置文件查找数据存储目录
 data_volume: /data
 
@@ -11,7 +10,7 @@ cat images.list
 curl https://192.168.2.250:443/api/version  -k
 {"version":"v2.0"}
 
-`
+
 #!/bin/bash
 Harbor_Address=172.16.1.200       #Harbor主机地址
 Harbor_User=admin                      #登录Harbor的用户
@@ -47,4 +46,4 @@ for image_tag in $Image_tags;do
     docker rmi  $image_tag
     mv $image_Name.tar  $Tar_File
 done
-`
+
