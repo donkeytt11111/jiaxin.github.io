@@ -10,7 +10,7 @@ cat images.list
 curl https://192.168.2.250:443/api/version  -k
 {"version":"v2.0"}
 
-
+```shell
 #!/bin/bash
 Harbor_Address=172.16.1.200       #Harbor主机地址
 Harbor_User=admin                      #登录Harbor的用户

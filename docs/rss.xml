@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Tue, 04 Jun 2024 06:46:25 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>harbor自动化拉取镜像方案</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/harbor-zi-dong-hua-la-qu-jing-xiang-fang-an.html</link><description>grep data_volume  /app/harbor/harbor.yml    #根据配置文件查找数据存储目录&#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Tue, 04 Jun 2024 06:48:18 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>harbor自动化拉取镜像方案</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/harbor-zi-dong-hua-la-qu-jing-xiang-fang-an.html</link><description>grep data_volume  /app/harbor/harbor.yml    #根据配置文件查找数据存储目录&#13;
 data_volume: /data&#13;
 &#13;
 cd /data/registry     #进入到Harbor的数据目录下&#13;
@@ -11,7 +11,7 @@ cat images.list&#13;
 curl https://192.168.2.250:443/api/version  -k&#13;
 {'version':'v2.0'}&#13;
 &#13;
-&#13;
+```shell&#13;
 #!/bin/bash&#13;
 Harbor_Address=172.16.1.200       #Harbor主机地址&#13;
 Harbor_User=admin                      #登录Harbor的用户&#13;
