@@ -46,4 +46,3 @@ for image_tag in $Image_tags;do
     docker rmi  $image_tag
     mv $image_Name.tar  $Tar_File
 done
-
