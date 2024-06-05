@@ -1,5 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Wed, 05 Jun 2024 00:43:57 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>jenkins部署</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/jenkins-bu-shu.html</link><description>docker pull jenkins/jenkins&#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Wed, 05 Jun 2024 05:27:22 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>K8S集群IP迁移方案</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/K8S-ji-qun-IP-qian-yi-fang-an.html</link><description>![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/df4eac8d-85f4-4e83-bc69-c4b2f34ef6e0)&#13;
+👍 先修改master3&#13;
+👍 :%s/172.16.8.70/172.16.102.70/g&#13;
+![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/44e9920b-3a94-45bf-bc96-d3d7ccc9ff9f)&#13;
+👍 新增&#13;
+master2 master1 同理&#13;
+👍 master1注意network下面的IP要改回之前的参照下图(因为全局替换了)&#13;
+![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/ca265ed9-9a8b-498d-9066-ae19f96467de)&#13;
+👍 将 /root/.tallos 和kube 改为新节点master1的IP&#13;
+👍 kubectl edit configmap  cluster-config -n kube-system 将IP改为新地址IP&#13;
+👍 talosctl reboot -n ms1,ms2,ms3(IP)&#13;
+👍 重启完成后，将网关修改新的网关，旧IP删除&#13;
+![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/814dcc35-22fd-429f-bd60-ac0b7417fe18)&#13;
+![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/817a5bf1-9c84-434c-8d4e-caa9e35205ce)。</description><guid isPermaLink="true">https://donkeytt11111.github.io/jiaxin.github.io/post/K8S-ji-qun-IP-qian-yi-fang-an.html</guid><pubDate>Wed, 05 Jun 2024 05:26:57 +0000</pubDate></item><item><title>jenkins部署</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/jenkins-bu-shu.html</link><description>docker pull jenkins/jenkins&#13;
 &#13;
 docker run \&#13;
   -u root \&#13;
