@@ -50,4 +50,4 @@ for image_tag in $Image_tags;do
     mv $image_Name.tar  $Tar_File
 done
 ```shell
-![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/e6e1a2cb-3d1f-44ec-8b3c-1b3531e88e74)
+test
