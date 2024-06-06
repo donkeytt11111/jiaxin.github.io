@@ -49,4 +49,5 @@ for image_tag in $Image_tags;do
     docker rmi  $image_tag
     mv $image_Name.tar  $Tar_File
 done
-![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/9b1c20d7-926b-4193-a27c-d6b1f5ff5dd9)
+```shell
+![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/e6e1a2cb-3d1f-44ec-8b3c-1b3531e88e74)
