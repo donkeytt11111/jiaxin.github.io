@@ -1,5 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Thu, 06 Jun 2024 02:31:08 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>集群快照备份</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/ji-qun-kuai-zhao-bei-fen.html</link><description>snap install yq&#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Thu, 06 Jun 2024 02:36:38 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>helm转yaml方法</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/helm-zhuan-yaml-fang-fa.html</link><description>#1.首先需要一个http服务器，通过docker或者在centos上直接yum install 部署都可以&#13;
+docker run -d -p 8081:80 -v /var/www:/usr/local/apache2/htdocs httpd&#13;
+这个docker命令会创建并运行一个httpd容器,参数说明如下:&#13;
+&#13;
+-d: 后台运行容器&#13;
+-p 8081:80: 映射容器内80端口到宿主机8081端口&#13;
+-v /var/www:/usr/local/apache2/htdocs: 把宿主机/var/www目录挂载到容器的/usr/local/apache2/htdocs,作为网页文档根目录&#13;
+httpd: 使用httpd镜像启动容器&#13;
+这样就在宿主机8081端口启动了一个httpd服务器,网页文档来自宿主机的/var/www目录。</description><guid isPermaLink="true">https://donkeytt11111.github.io/jiaxin.github.io/post/helm-zhuan-yaml-fang-fa.html</guid><pubDate>Thu, 06 Jun 2024 02:36:16 +0000</pubDate></item><item><title>集群快照备份</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/ji-qun-kuai-zhao-bei-fen.html</link><description>snap install yq&#13;
 &#13;
 #创建etcd节点数据库备份&#13;
 talosctl -n 172.16.8.70 etcd snapshot db.snapshot&#13;
