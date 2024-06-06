@@ -49,3 +49,4 @@ for image_tag in $Image_tags;do
     docker rmi  $image_tag
     mv $image_Name.tar  $Tar_File
 done
+![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/86ef0c78-db82-4f75-9af2-c83b3a6a5f5b)

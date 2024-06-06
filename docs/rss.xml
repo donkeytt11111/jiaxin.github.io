@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Thu, 06 Jun 2024 02:41:02 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>禅道部署</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/shan-dao-bu-shu.html</link><description>docker pull hub.zentao.net/app/zentao:18.5 &#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Thu, 06 Jun 2024 03:18:57 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>禅道部署</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/shan-dao-bu-shu.html</link><description>docker pull hub.zentao.net/app/zentao:18.5 &#13;
 &#13;
 &#13;
 &#13;
@@ -228,4 +228,6 @@ for image_tag in $Image_tags;do&#13;
     docker rmi  172.16.1.200/$image_tag&#13;
     docker rmi  $image_tag&#13;
     mv $image_Name.tar  $Tar_File&#13;
-done。</description><guid isPermaLink="true">https://donkeytt11111.github.io/jiaxin.github.io/post/harbor-zi-dong-hua-la-qu-jing-xiang-fang-an.html</guid><pubDate>Tue, 04 Jun 2024 06:37:38 +0000</pubDate></item></channel></rss>
+done&#13;
+![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/86ef0c78-db82-4f75-9af2-c83b3a6a5f5b)&#13;
+。</description><guid isPermaLink="true">https://donkeytt11111.github.io/jiaxin.github.io/post/harbor-zi-dong-hua-la-qu-jing-xiang-fang-an.html</guid><pubDate>Tue, 04 Jun 2024 06:37:38 +0000</pubDate></item></channel></rss>
