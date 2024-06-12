@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="//cdn.staticfile.net/Primer/21.0.7/primer.css" rel="stylesheet" />
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="```yaml
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: nginx
+  annotations:
+    helm.sh/resource-policy: keep
+spec:
+  capacity:
+    storage: 20Gi
+  nfs:
+    server: endpoint
+    path: /var/local-storage
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: nginxstorageclass
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: nginx
+  namespace: cncp-production
+  annotations:
+    helm.sh/resource-policy: keep
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: nginxstorageclass
+
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: nginx
+  namespace: cncp-production
+data:
+  nginx.conf: |-
+    events {
+        worker_connections 50000;
+    }
+    pid /var/run/nginx.pid;
+    http {
+        include       mime.types;
+        default_type  application/octet-stream;
+        client_max_body_size 1000m;
+        sendfile        on;
+        keepalive_timeout  65;
+        log_format app_access_log 'logstart|$time_iso8601|$remote_addr|$remote_port|$server_addr|$server_port|$host|$http_host$uri|$status|$http_x_forwarded_for|$http_referer|$http_user_agent|$upstream_cache_status|$bytes_sent|$proxy_add_x_forwarded_for|$connection_requests|$request_length|';
+    }
+    stream {
+    }
+  init-entrypoint.sh: |-
+    #!/usr/bin/env sh
+    set -e -u
+    NGINX_INIT_PATH='/opt/nginx'
+    NGINX_CONFIG_PATH='/usr/local/nginx/conf/nginxconf'
+    config_files=(nginx.conf)
+    for file in ${config_files[@]}
+    do
+        if [ ! -f $NGINX_CONFIG_PATH/$file ]; then
+            cp $NGINX_INIT_PATH/$file $NGINX_CONFIG_PATH
+        fi
+    done
+  handle-outerchains.sh: |-
+    #!/usr/bin/env sh
+    set +e +u
+    cd /usr/local/nginx/conf/nginxconf
+    declare -A filesTime
+    label=0
+    while true
+    do
+        label=0
+        echo 'label'$label
+        filesname=`ls -lR |grep -v ^d|awk '{print $9}' | tr -s '\n'`
+        echo 'allfilename'$filesname
+        for filestr in ${filesname[@]};do
+        echo 'filename'$filestr
+        if [ '$filestr' != 'nginx.conf' ] && [[ $filestr != sed* ]];then
+        echo 'filename'$filestr
+          old_modified_time=`stat -c %y $filestr`
+          echo 'new time'$old_modified_time
+          if [ '${filesTime['$filestr']}' != '$old_modified_time' ];then
+          echo 'first time'${filesTime[$filestr]}
+          label=1
+          echo 'label'$label
+          sed -i 's/'/\'/g' $filestr
+          new_modified_time=`stat -c %y $filestr`
+          filesTime[$filestr]=$new_modified_time
+          echo 'first time2'${filesTime[$filestr]}
+          echo 'new time2'$new_modified_time
+          fi
+        fi
+        done
+        if [ '$label' == 1 ];then
+        nginx -s reload
+        fi
+        sleep 3
+    done
+  docker-entrypoint.sh: |-
+    #!/usr/bin/env sh
+    set -e -u
+    #���cacheȨ�ޱ�������
+    chmod 777 /usr/local/nginx/cache
+    nohup /usr/local/bin/handle-outerchains.sh > /var/log/handle-outerchains.log 2>&1 &
+    /usr/local/nginx/sbin/nginx
+    /opt/reload.sh
+  fluent.conf: |
+    <system>
+        enable_filter_chain_optimization false
+    </system>
+    <source>
+      @id fluentd-containers.log
+      @type tail
+      path /usr/local/nginx/logs/*.log
+      pos_file /var/log/nginx/nginx.pos
+      pos_file_compaction_interval 24h
+      tag nginx.*
+      read_from_head true
+      follow_inodes true
+      <parse>
+        @type none
+      </parse>
+    </source>
+    <match nginx.**>
+      @type opensearch 
+      include_tag_key true 
+      #host 172.16.100.198
+      host opensearch-cluster-master.cncp-system
+      #port 30511
+      port 9200
+      user admin
+      password admin
+      index_name cncp-log
+      include_timestamp true    
+      logstash_format false
+      request_timeout    30s
+      ssl_verify false
+      timezone +08:00
+      scheme http
+      <buffer>
+        @type file
+        path /var/log/fluentd-buffers/kubernetes.system.buffer
+        flush_mode interval
+        retry_type exponential_backoff
+        flush_thread_count 2
+        flush_interval 5s
+        retry_forever
+        retry_max_interval 30
+        chunk_limit_size 2M
+        queue_limit_length 8
+        overflow_action block
+        timekey 1h
+     </buffer>
+    </match>
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nginx
+  namespace: cncp-production
+spec:
+  replicas: 3
+  revisionHistoryLimit: 15
+  selector:
+    matchLabels:
+      cncp-component: nginx
+  template:
+    metadata:
+      labels:
+        cncp-component: nginx
+    spec:
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+      - name: config
+        configMap:
+          name: nginx
+          defaultMode: 511
+      - name: storage
+        persistentVolumeClaim:
+          claimName: nginx
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: varlibdockercontainers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: shared-data
+        emptyDir: {}
+      initContainers:
+      - name: init
+        image: mingyangtech.com.cn/mingyang/centos:v7.9.2009
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: config
+          mountPath: /opt/nginx/nginx.conf
+          subPath: nginx.conf
+        - name: config
+          mountPath: /usr/local/bin/entrypoint.sh
+          subPath: init-entrypoint.sh
+        - name: storage
+          mountPath: /usr/local/nginx/conf/nginxconf/
+          subPath: usr/local/nginx/conf/nginxconf/
+      containers:
+      - name: nginx
+        image: mingyangtech.com.cn/mingyang/cncp-nginx:v1.2.1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: 'Asia/Shanghai'
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - name: localtime
+          mountPath: /etc/localtime
+        - name: config
+          mountPath: /usr/local/bin/handle-hosts.sh
+          subPath: handle-hosts.sh
+        - name: config
+          mountPath: /usr/local/bin/handle-outerchains.sh
+          subPath: handle-outerchains.sh
+        - name: config
+          mountPath: /usr/local/bin/docker-entrypoint.sh
+          subPath: docker-entrypoint.sh
+        - name: storage
+          mountPath: /usr/local/nginx/conf/nginxconf/
+          subPath: usr/local/nginx/conf/nginxconf/
+        - name: storage
+          mountPath: /usr/local/nginx/cert
+          subPath: usr/local/nginx/cert
+        - name: storage
+          mountPath: /usr/local/nginx/cache
+          subPath: usr/local/nginx/cache
+        #- name: storage
+        #  mountPath: /usr/local/nginx/logs
+        #  subPath: usr/local/nginx/logs
+        - name: shared-data
+          mountPath: /usr/local/nginx/logs
+      - name: fluentd
+        image: mingyangtech.com.cn/mingyang/fluentd:v1.0.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: 'Asia/Shanghai'
+        env:
+        - name: FLUENTD_ARGS
+          value: --no-supervisor -q
+        resources:
+          limits:
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        - name: varlibdockercontainers
+          mountPath: /var/lib/docker/containers
+        - name: config
+          mountPath: /fluentd/etc
+        - name: shared-data
+          mountPath: /usr/local/nginx/logs
+        securityContext:
+          privileged: true
+      nodeSelector:
+        kubernetes.io/os: linux
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:  # Ӳ����
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - busybox-pod
+            topologyKey: kubernetes.io/hostname
+      tolerations:
+      - key: node.kubenetes.io/not-ready
+        effect: NoExecute
+        tolerationSeconds: 30
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx-helper
+  namespace: cncp-production
+spec:
+  ports:
+  - protocol: TCP
+    port: 22
+    targetPort: 22
+    nodePort: 32004
+  selector:
+    cncp-component: nginx-helper
+  type: NodePort
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nginx-helper
+  namespace: cncp-production
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      cncp-component: nginx-helper
+  template: 
+    metadata:
+      labels: 
+        cncp-component: nginx-helper
+    spec:
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+      - name: storage
+        persistentVolumeClaim:
+          claimName: nginx
+      containers:
+      - name: helper
+        image: mingyangtech.com.cn/mingyang/ssh-server:v1.0.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: 'Asia/Shanghai'
+        ports:
+        - containerPort: 22
+        resources:
+          requests:
+            cpu: 10m
+            memory: 40Mi
+          limits:
+            cpu: 500m
+            memory: 2Gi
+        volumeMounts:
+        - name: localtime
+          mountPath: /etc/localtime
+        - name: storage
+          mountPath: /usr/local/nginx/conf/nginxconf/
+          subPath: usr/local/nginx/conf/nginxconf/
+        - name: storage
+          mountPath: /usr/local/nginx/cert
+          subPath: usr/local/nginx/cert
+        - name: storage
+          mountPath: /usr/local/nginx/cache
+          subPath: usr/local/nginx/cache
+        - name: storage
+          mountPath: /usr/local/nginx/logs
+          subPath: usr/local/nginx/logs
+        securityContext:
+          privileged: true
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+      - operator: Exists
+        effect: NoSchedule
+      - operator: Exists
+        effect: NoExecute
+  strategy:
+    type: Recreate
+。">
+<meta property="og:title" content="nginx-deployment.yaml">
+<meta property="og:description" content="```yaml
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: nginx
+  annotations:
+    helm.sh/resource-policy: keep
+spec:
+  capacity:
+    storage: 20Gi
+  nfs:
+    server: endpoint
+    path: /var/local-storage
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: nginxstorageclass
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: nginx
+  namespace: cncp-production
+  annotations:
+    helm.sh/resource-policy: keep
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: nginxstorageclass
+
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: nginx
+  namespace: cncp-production
+data:
+  nginx.conf: |-
+    events {
+        worker_connections 50000;
+    }
+    pid /var/run/nginx.pid;
+    http {
+        include       mime.types;
+        default_type  application/octet-stream;
+        client_max_body_size 1000m;
+        sendfile        on;
+        keepalive_timeout  65;
+        log_format app_access_log 'logstart|$time_iso8601|$remote_addr|$remote_port|$server_addr|$server_port|$host|$http_host$uri|$status|$http_x_forwarded_for|$http_referer|$http_user_agent|$upstream_cache_status|$bytes_sent|$proxy_add_x_forwarded_for|$connection_requests|$request_length|';
+    }
+    stream {
+    }
+  init-entrypoint.sh: |-
+    #!/usr/bin/env sh
+    set -e -u
+    NGINX_INIT_PATH='/opt/nginx'
+    NGINX_CONFIG_PATH='/usr/local/nginx/conf/nginxconf'
+    config_files=(nginx.conf)
+    for file in ${config_files[@]}
+    do
+        if [ ! -f $NGINX_CONFIG_PATH/$file ]; then
+            cp $NGINX_INIT_PATH/$file $NGINX_CONFIG_PATH
+        fi
+    done
+  handle-outerchains.sh: |-
+    #!/usr/bin/env sh
+    set +e +u
+    cd /usr/local/nginx/conf/nginxconf
+    declare -A filesTime
+    label=0
+    while true
+    do
+        label=0
+        echo 'label'$label
+        filesname=`ls -lR |grep -v ^d|awk '{print $9}' | tr -s '\n'`
+        echo 'allfilename'$filesname
+        for filestr in ${filesname[@]};do
+        echo 'filename'$filestr
+        if [ '$filestr' != 'nginx.conf' ] && [[ $filestr != sed* ]];then
+        echo 'filename'$filestr
+          old_modified_time=`stat -c %y $filestr`
+          echo 'new time'$old_modified_time
+          if [ '${filesTime['$filestr']}' != '$old_modified_time' ];then
+          echo 'first time'${filesTime[$filestr]}
+          label=1
+          echo 'label'$label
+          sed -i 's/'/\'/g' $filestr
+          new_modified_time=`stat -c %y $filestr`
+          filesTime[$filestr]=$new_modified_time
+          echo 'first time2'${filesTime[$filestr]}
+          echo 'new time2'$new_modified_time
+          fi
+        fi
+        done
+        if [ '$label' == 1 ];then
+        nginx -s reload
+        fi
+        sleep 3
+    done
+  docker-entrypoint.sh: |-
+    #!/usr/bin/env sh
+    set -e -u
+    #���cacheȨ�ޱ�������
+    chmod 777 /usr/local/nginx/cache
+    nohup /usr/local/bin/handle-outerchains.sh > /var/log/handle-outerchains.log 2>&1 &
+    /usr/local/nginx/sbin/nginx
+    /opt/reload.sh
+  fluent.conf: |
+    <system>
+        enable_filter_chain_optimization false
+    </system>
+    <source>
+      @id fluentd-containers.log
+      @type tail
+      path /usr/local/nginx/logs/*.log
+      pos_file /var/log/nginx/nginx.pos
+      pos_file_compaction_interval 24h
+      tag nginx.*
+      read_from_head true
+      follow_inodes true
+      <parse>
+        @type none
+      </parse>
+    </source>
+    <match nginx.**>
+      @type opensearch 
+      include_tag_key true 
+      #host 172.16.100.198
+      host opensearch-cluster-master.cncp-system
+      #port 30511
+      port 9200
+      user admin
+      password admin
+      index_name cncp-log
+      include_timestamp true    
+      logstash_format false
+      request_timeout    30s
+      ssl_verify false
+      timezone +08:00
+      scheme http
+      <buffer>
+        @type file
+        path /var/log/fluentd-buffers/kubernetes.system.buffer
+        flush_mode interval
+        retry_type exponential_backoff
+        flush_thread_count 2
+        flush_interval 5s
+        retry_forever
+        retry_max_interval 30
+        chunk_limit_size 2M
+        queue_limit_length 8
+        overflow_action block
+        timekey 1h
+     </buffer>
+    </match>
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nginx
+  namespace: cncp-production
+spec:
+  replicas: 3
+  revisionHistoryLimit: 15
+  selector:
+    matchLabels:
+      cncp-component: nginx
+  template:
+    metadata:
+      labels:
+        cncp-component: nginx
+    spec:
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+      - name: config
+        configMap:
+          name: nginx
+          defaultMode: 511
+      - name: storage
+        persistentVolumeClaim:
+          claimName: nginx
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: varlibdockercontainers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: shared-data
+        emptyDir: {}
+      initContainers:
+      - name: init
+        image: mingyangtech.com.cn/mingyang/centos:v7.9.2009
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: config
+          mountPath: /opt/nginx/nginx.conf
+          subPath: nginx.conf
+        - name: config
+          mountPath: /usr/local/bin/entrypoint.sh
+          subPath: init-entrypoint.sh
+        - name: storage
+          mountPath: /usr/local/nginx/conf/nginxconf/
+          subPath: usr/local/nginx/conf/nginxconf/
+      containers:
+      - name: nginx
+        image: mingyangtech.com.cn/mingyang/cncp-nginx:v1.2.1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: 'Asia/Shanghai'
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - name: localtime
+          mountPath: /etc/localtime
+        - name: config
+          mountPath: /usr/local/bin/handle-hosts.sh
+          subPath: handle-hosts.sh
+        - name: config
+          mountPath: /usr/local/bin/handle-outerchains.sh
+          subPath: handle-outerchains.sh
+        - name: config
+          mountPath: /usr/local/bin/docker-entrypoint.sh
+          subPath: docker-entrypoint.sh
+        - name: storage
+          mountPath: /usr/local/nginx/conf/nginxconf/
+          subPath: usr/local/nginx/conf/nginxconf/
+        - name: storage
+          mountPath: /usr/local/nginx/cert
+          subPath: usr/local/nginx/cert
+        - name: storage
+          mountPath: /usr/local/nginx/cache
+          subPath: usr/local/nginx/cache
+        #- name: storage
+        #  mountPath: /usr/local/nginx/logs
+        #  subPath: usr/local/nginx/logs
+        - name: shared-data
+          mountPath: /usr/local/nginx/logs
+      - name: fluentd
+        image: mingyangtech.com.cn/mingyang/fluentd:v1.0.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: 'Asia/Shanghai'
+        env:
+        - name: FLUENTD_ARGS
+          value: --no-supervisor -q
+        resources:
+          limits:
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        - name: varlibdockercontainers
+          mountPath: /var/lib/docker/containers
+        - name: config
+          mountPath: /fluentd/etc
+        - name: shared-data
+          mountPath: /usr/local/nginx/logs
+        securityContext:
+          privileged: true
+      nodeSelector:
+        kubernetes.io/os: linux
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:  # Ӳ����
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - busybox-pod
+            topologyKey: kubernetes.io/hostname
+      tolerations:
+      - key: node.kubenetes.io/not-ready
+        effect: NoExecute
+        tolerationSeconds: 30
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx-helper
+  namespace: cncp-production
+spec:
+  ports:
+  - protocol: TCP
+    port: 22
+    targetPort: 22
+    nodePort: 32004
+  selector:
+    cncp-component: nginx-helper
+  type: NodePort
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nginx-helper
+  namespace: cncp-production
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      cncp-component: nginx-helper
+  template: 
+    metadata:
+      labels: 
+        cncp-component: nginx-helper
+    spec:
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+      - name: storage
+        persistentVolumeClaim:
+          claimName: nginx
+      containers:
+      - name: helper
+        image: mingyangtech.com.cn/mingyang/ssh-server:v1.0.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: 'Asia/Shanghai'
+        ports:
+        - containerPort: 22
+        resources:
+          requests:
+            cpu: 10m
+            memory: 40Mi
+          limits:
+            cpu: 500m
+            memory: 2Gi
+        volumeMounts:
+        - name: localtime
+          mountPath: /etc/localtime
+        - name: storage
+          mountPath: /usr/local/nginx/conf/nginxconf/
+          subPath: usr/local/nginx/conf/nginxconf/
+        - name: storage
+          mountPath: /usr/local/nginx/cert
+          subPath: usr/local/nginx/cert
+        - name: storage
+          mountPath: /usr/local/nginx/cache
+          subPath: usr/local/nginx/cache
+        - name: storage
+          mountPath: /usr/local/nginx/logs
+          subPath: usr/local/nginx/logs
+        securityContext:
+          privileged: true
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+      - operator: Exists
+        effect: NoSchedule
+      - operator: Exists
+        effect: NoExecute
+  strategy:
+    type: Recreate
+。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://donkeytt11111.github.io/jiaxin.github.io/post/nginx-deployment.yaml.html">
+<meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
+<title>nginx-deployment.yaml</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">nginx-deployment.yaml</h1>
+<div class="title-right">
+    <a href="https://donkeytt11111.github.io/jiaxin.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/donkeytt11111/jiaxin.github.io/issues/25" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><div class="highlight highlight-source-yaml"><pre class="notranslate">---
+<span class="pl-ent">kind</span>: <span class="pl-s">PersistentVolume</span>
+<span class="pl-ent">apiVersion</span>: <span class="pl-c1">v1</span>
+<span class="pl-ent">metadata</span>:
+  <span class="pl-ent">name</span>: <span class="pl-s">nginx</span>
+  <span class="pl-ent">annotations</span>:
+    <span class="pl-ent">helm.sh/resource-policy</span>: <span class="pl-s">keep</span>
+<span class="pl-ent">spec</span>:
+  <span class="pl-ent">capacity</span>:
+    <span class="pl-ent">storage</span>: <span class="pl-s">20Gi</span>
+  <span class="pl-ent">nfs</span>:
+    <span class="pl-ent">server</span>: <span class="pl-s">endpoint</span>
+    <span class="pl-ent">path</span>: <span class="pl-s">/var/local-storage</span>
+  <span class="pl-ent">accessModes</span>:
+  - <span class="pl-s">ReadWriteMany</span>
+  <span class="pl-ent">persistentVolumeReclaimPolicy</span>: <span class="pl-s">Retain</span>
+  <span class="pl-ent">storageClassName</span>: <span class="pl-s">nginxstorageclass</span>
+
+---
+<span class="pl-ent">kind</span>: <span class="pl-s">PersistentVolumeClaim</span>
+<span class="pl-ent">apiVersion</span>: <span class="pl-c1">v1</span>
+<span class="pl-ent">metadata</span>:
+  <span class="pl-ent">name</span>: <span class="pl-s">nginx</span>
+  <span class="pl-ent">namespace</span>: <span class="pl-s">cncp-production</span>
+  <span class="pl-ent">annotations</span>:
+    <span class="pl-ent">helm.sh/resource-policy</span>: <span class="pl-s">keep</span>
+<span class="pl-ent">spec</span>:
+  <span class="pl-ent">accessModes</span>:
+  - <span class="pl-s">ReadWriteMany</span>
+  <span class="pl-ent">resources</span>:
+    <span class="pl-ent">requests</span>:
+      <span class="pl-ent">storage</span>: <span class="pl-s">20Gi</span>
+  <span class="pl-ent">storageClassName</span>: <span class="pl-s">nginxstorageclass</span>
+
+---
+<span class="pl-ent">kind</span>: <span class="pl-s">ConfigMap</span>
+<span class="pl-ent">apiVersion</span>: <span class="pl-c1">v1</span>
+<span class="pl-ent">metadata</span>:
+  <span class="pl-ent">name</span>: <span class="pl-s">nginx</span>
+  <span class="pl-ent">namespace</span>: <span class="pl-s">cncp-production</span>
+<span class="pl-ent">data</span>:
+  <span class="pl-ent">nginx.conf</span>: <span class="pl-s">|-</span>
+<span class="pl-s">    events {</span>
+<span class="pl-s">        worker_connections 50000;</span>
+<span class="pl-s">    }</span>
+<span class="pl-s">    pid /var/run/nginx.pid;</span>
+<span class="pl-s">    http {</span>
+<span class="pl-s">        include       mime.types;</span>
+<span class="pl-s">        default_type  application/octet-stream;</span>
+<span class="pl-s">        client_max_body_size 1000m;</span>
+<span class="pl-s">        sendfile        on;</span>
+<span class="pl-s">        keepalive_timeout  65;</span>
+<span class="pl-s">        log_format app_access_log 'logstart|$time_iso8601|$remote_addr|$remote_port|$server_addr|$server_port|$host|$http_host$uri|$status|$http_x_forwarded_for|$http_referer|$http_user_agent|$upstream_cache_status|$bytes_sent|$proxy_add_x_forwarded_for|$connection_requests|$request_length|';</span>
+<span class="pl-s">    }</span>
+<span class="pl-s">    stream {</span>
+<span class="pl-s">    }</span>
+<span class="pl-s"></span>  <span class="pl-ent">init-entrypoint.sh</span>: <span class="pl-s">|-</span>
+<span class="pl-s">    #!/usr/bin/env sh</span>
+<span class="pl-s">    set -e -u</span>
+<span class="pl-s">    NGINX_INIT_PATH="/opt/nginx"</span>
+<span class="pl-s">    NGINX_CONFIG_PATH="/usr/local/nginx/conf/nginxconf"</span>
+<span class="pl-s">    config_files=(nginx.conf)</span>
+<span class="pl-s">    for file in ${config_files[@]}</span>
+<span class="pl-s">    do</span>
+<span class="pl-s">        if [ ! -f $NGINX_CONFIG_PATH/$file ]; then</span>
+<span class="pl-s">            cp $NGINX_INIT_PATH/$file $NGINX_CONFIG_PATH</span>
+<span class="pl-s">        fi</span>
+<span class="pl-s">    done</span>
+<span class="pl-s"></span>  <span class="pl-ent">handle-outerchains.sh</span>: <span class="pl-s">|-</span>
+<span class="pl-s">    #!/usr/bin/env sh</span>
+<span class="pl-s">    set +e +u</span>
+<span class="pl-s">    cd /usr/local/nginx/conf/nginxconf</span>
+<span class="pl-s">    declare -A filesTime</span>
+<span class="pl-s">    label=0</span>
+<span class="pl-s">    while <span class="pl-c1">true</span></span>
+<span class="pl-s">    do</span>
+<span class="pl-s">        label=0</span>
+<span class="pl-s">        echo "label"$label</span>
+<span class="pl-s">        filesname=`ls -lR |grep -v ^d|awk '{print $9}' | tr -s '\n'`</span>
+<span class="pl-s">        echo "allfilename"$filesname</span>
+<span class="pl-s">        for filestr in ${filesname[@]};do</span>
+<span class="pl-s">        echo "filename"$filestr</span>
+<span class="pl-s">        if [ "$filestr" != "nginx.conf" ] &amp;&amp; [[ $filestr != sed* ]];then</span>
+<span class="pl-s">        echo "filename"$filestr</span>
+<span class="pl-s">          old_modified_time=`stat -c %y $filestr`</span>
+<span class="pl-s">          echo "new time"$old_modified_time</span>
+<span class="pl-s">          if [ "${filesTime["$filestr"]}" != "$old_modified_time" ];then</span>
+<span class="pl-s">          echo "first time"${filesTime[$filestr]}</span>
+<span class="pl-s">          label=1</span>
+<span class="pl-s">          echo "label"$label</span>
+<span class="pl-s">          sed -i "s/'/\"/g" $filestr</span>
+<span class="pl-s">          new_modified_time=`stat -c %y $filestr`</span>
+<span class="pl-s">          filesTime[$filestr]=$new_modified_time</span>
+<span class="pl-s">          echo "first time2"${filesTime[$filestr]}</span>
+<span class="pl-s">          echo "new time2"$new_modified_time</span>
+<span class="pl-s">          fi</span>
+<span class="pl-s">        fi</span>
+<span class="pl-s">        done</span>
+<span class="pl-s">        if [ "$label" == 1 ];then</span>
+<span class="pl-s">        nginx -s reload</span>
+<span class="pl-s">        fi</span>
+<span class="pl-s">        sleep 3</span>
+<span class="pl-s">    done</span>
+<span class="pl-s"></span>  <span class="pl-ent">docker-entrypoint.sh</span>: <span class="pl-s">|-</span>
+<span class="pl-s">    #!/usr/bin/env sh</span>
+<span class="pl-s">    set -e -u</span>
+<span class="pl-s">    #���cacheȨ�ޱ�������</span>
+<span class="pl-s">    chmod 777 /usr/local/nginx/cache</span>
+<span class="pl-s">    nohup /usr/local/bin/handle-outerchains.sh &gt; /var/log/handle-outerchains.log 2&gt;&amp;1 &amp;</span>
+<span class="pl-s">    /usr/local/nginx/sbin/nginx</span>
+<span class="pl-s">    /opt/reload.sh</span>
+<span class="pl-s"></span>  <span class="pl-ent">fluent.conf</span>: <span class="pl-s">|</span>
+<span class="pl-s">    &lt;system&gt;</span>
+<span class="pl-s">        enable_filter_chain_optimization <span class="pl-c1">false</span></span>
+<span class="pl-s">    &lt;/system&gt;</span>
+<span class="pl-s">    &lt;source&gt;</span>
+<span class="pl-s">      @id fluentd-containers.log</span>
+<span class="pl-s">      @type tail</span>
+<span class="pl-s">      path /usr/local/nginx/logs/*.log</span>
+<span class="pl-s">      pos_file /var/log/nginx/nginx.pos</span>
+<span class="pl-s">      pos_file_compaction_interval 24h</span>
+<span class="pl-s">      tag nginx.*</span>
+<span class="pl-s">      read_from_head <span class="pl-c1">true</span></span>
+<span class="pl-s">      follow_inodes <span class="pl-c1">true</span></span>
+<span class="pl-s">      &lt;parse&gt;</span>
+<span class="pl-s">        @type none</span>
+<span class="pl-s">      &lt;/parse&gt;</span>
+<span class="pl-s">    &lt;/source&gt;</span>
+<span class="pl-s">    &lt;match nginx.**&gt;</span>
+<span class="pl-s">      @type opensearch </span>
+<span class="pl-s">      include_tag_key <span class="pl-c1">true</span> </span>
+<span class="pl-s">      #host 172.16.100.198</span>
+<span class="pl-s">      host opensearch-cluster-master.cncp-system</span>
+<span class="pl-s">      #port 30511</span>
+<span class="pl-s">      port 9200</span>
+<span class="pl-s">      user admin</span>
+<span class="pl-s">      password admin</span>
+<span class="pl-s">      index_name cncp-log</span>
+<span class="pl-s">      include_timestamp <span class="pl-c1">true</span>    </span>
+<span class="pl-s">      logstash_format <span class="pl-c1">false</span></span>
+<span class="pl-s">      request_timeout    30s</span>
+<span class="pl-s">      ssl_verify <span class="pl-c1">false</span></span>
+<span class="pl-s">      timezone +08:00</span>
+<span class="pl-s">      scheme http</span>
+<span class="pl-s">      &lt;buffer&gt;</span>
+<span class="pl-s">        @type file</span>
+<span class="pl-s">        path /var/log/fluentd-buffers/kubernetes.system.buffer</span>
+<span class="pl-s">        flush_mode interval</span>
+<span class="pl-s">        retry_type exponential_backoff</span>
+<span class="pl-s">        flush_thread_count 2</span>
+<span class="pl-s">        flush_interval 5s</span>
+<span class="pl-s">        retry_forever</span>
+<span class="pl-s">        retry_max_interval 30</span>
+<span class="pl-s">        chunk_limit_size 2M</span>
+<span class="pl-s">        queue_limit_length 8</span>
+<span class="pl-s">        overflow_action block</span>
+<span class="pl-s">        timekey 1h</span>
+<span class="pl-s">     &lt;/buffer&gt;</span>
+<span class="pl-s">    &lt;/match&gt;</span>
+<span class="pl-s"></span>---
+<span class="pl-ent">kind</span>: <span class="pl-s">Deployment</span>
+<span class="pl-ent">apiVersion</span>: <span class="pl-s">apps/v1</span>
+<span class="pl-ent">metadata</span>:
+  <span class="pl-ent">name</span>: <span class="pl-s">nginx</span>
+  <span class="pl-ent">namespace</span>: <span class="pl-s">cncp-production</span>
+<span class="pl-ent">spec</span>:
+  <span class="pl-ent">replicas</span>: <span class="pl-c1">3</span>
+  <span class="pl-ent">revisionHistoryLimit</span>: <span class="pl-c1">15</span>
+  <span class="pl-ent">selector</span>:
+    <span class="pl-ent">matchLabels</span>:
+      <span class="pl-ent">cncp-component</span>: <span class="pl-s">nginx</span>
+  <span class="pl-ent">template</span>:
+    <span class="pl-ent">metadata</span>:
+      <span class="pl-ent">labels</span>:
+        <span class="pl-ent">cncp-component</span>: <span class="pl-s">nginx</span>
+    <span class="pl-ent">spec</span>:
+      <span class="pl-ent">volumes</span>:
+      - <span class="pl-ent">name</span>: <span class="pl-s">localtime</span>
+        <span class="pl-ent">hostPath</span>:
+          <span class="pl-ent">path</span>: <span class="pl-s">/etc/localtime</span>
+      - <span class="pl-ent">name</span>: <span class="pl-s">config</span>
+        <span class="pl-ent">configMap</span>:
+          <span class="pl-ent">name</span>: <span class="pl-s">nginx</span>
+          <span class="pl-ent">defaultMode</span>: <span class="pl-c1">511</span>
+      - <span class="pl-ent">name</span>: <span class="pl-s">storage</span>
+        <span class="pl-ent">persistentVolumeClaim</span>:
+          <span class="pl-ent">claimName</span>: <span class="pl-s">nginx</span>
+      - <span class="pl-ent">name</span>: <span class="pl-s">varlog</span>
+        <span class="pl-ent">hostPath</span>:
+          <span class="pl-ent">path</span>: <span class="pl-s">/var/log</span>
+      - <span class="pl-ent">name</span>: <span class="pl-s">varlibdockercontainers</span>
+        <span class="pl-ent">hostPath</span>:
+          <span class="pl-ent">path</span>: <span class="pl-s">/var/lib/docker/containers</span>
+      - <span class="pl-ent">name</span>: <span class="pl-s">shared-data</span>
+        <span class="pl-ent">emptyDir</span>: <span class="pl-s">{}</span>
+      <span class="pl-ent">initContainers</span>:
+      - <span class="pl-ent">name</span>: <span class="pl-s">init</span>
+        <span class="pl-ent">image</span>: <span class="pl-s">mingyangtech.com.cn/mingyang/centos:v7.9.2009</span>
+        <span class="pl-ent">imagePullPolicy</span>: <span class="pl-s">IfNotPresent</span>
+        <span class="pl-ent">volumeMounts</span>:
+        - <span class="pl-ent">name</span>: <span class="pl-s">config</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/opt/nginx/nginx.conf</span>
+          <span class="pl-ent">subPath</span>: <span class="pl-s">nginx.conf</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">config</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/usr/local/bin/entrypoint.sh</span>
+          <span class="pl-ent">subPath</span>: <span class="pl-s">init-entrypoint.sh</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">storage</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/usr/local/nginx/conf/nginxconf/</span>
+          <span class="pl-ent">subPath</span>: <span class="pl-s">usr/local/nginx/conf/nginxconf/</span>
+      <span class="pl-ent">containers</span>:
+      - <span class="pl-ent">name</span>: <span class="pl-s">nginx</span>
+        <span class="pl-ent">image</span>: <span class="pl-s">mingyangtech.com.cn/mingyang/cncp-nginx:v1.2.1</span>
+        <span class="pl-ent">imagePullPolicy</span>: <span class="pl-s">IfNotPresent</span>
+        <span class="pl-ent">env</span>:
+        - <span class="pl-ent">name</span>: <span class="pl-s">TZ</span>
+          <span class="pl-ent">value</span>: <span class="pl-s"><span class="pl-pds">"</span>Asia/Shanghai<span class="pl-pds">"</span></span>
+        <span class="pl-ent">ports</span>:
+        - <span class="pl-ent">containerPort</span>: <span class="pl-c1">80</span>
+          <span class="pl-ent">protocol</span>: <span class="pl-s">TCP</span>
+        <span class="pl-ent">volumeMounts</span>:
+        - <span class="pl-ent">name</span>: <span class="pl-s">localtime</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/etc/localtime</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">config</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/usr/local/bin/handle-hosts.sh</span>
+          <span class="pl-ent">subPath</span>: <span class="pl-s">handle-hosts.sh</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">config</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/usr/local/bin/handle-outerchains.sh</span>
+          <span class="pl-ent">subPath</span>: <span class="pl-s">handle-outerchains.sh</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">config</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/usr/local/bin/docker-entrypoint.sh</span>
+          <span class="pl-ent">subPath</span>: <span class="pl-s">docker-entrypoint.sh</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">storage</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/usr/local/nginx/conf/nginxconf/</span>
+          <span class="pl-ent">subPath</span>: <span class="pl-s">usr/local/nginx/conf/nginxconf/</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">storage</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/usr/local/nginx/cert</span>
+          <span class="pl-ent">subPath</span>: <span class="pl-s">usr/local/nginx/cert</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">storage</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/usr/local/nginx/cache</span>
+          <span class="pl-ent">subPath</span>: <span class="pl-s">usr/local/nginx/cache</span>
+        <span class="pl-c"><span class="pl-c">#</span>- name: storage</span>
+        <span class="pl-c"><span class="pl-c">#</span>  mountPath: /usr/local/nginx/logs</span>
+        <span class="pl-c"><span class="pl-c">#</span>  subPath: usr/local/nginx/logs</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">shared-data</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/usr/local/nginx/logs</span>
+      - <span class="pl-ent">name</span>: <span class="pl-s">fluentd</span>
+        <span class="pl-ent">image</span>: <span class="pl-s">mingyangtech.com.cn/mingyang/fluentd:v1.0.0</span>
+        <span class="pl-ent">imagePullPolicy</span>: <span class="pl-s">IfNotPresent</span>
+        <span class="pl-ent">env</span>:
+        - <span class="pl-ent">name</span>: <span class="pl-s">TZ</span>
+          <span class="pl-ent">value</span>: <span class="pl-s"><span class="pl-pds">"</span>Asia/Shanghai<span class="pl-pds">"</span></span>
+        <span class="pl-ent">env</span>:
+        - <span class="pl-ent">name</span>: <span class="pl-s">FLUENTD_ARGS</span>
+          <span class="pl-ent">value</span>: <span class="pl-s">--no-supervisor -q</span>
+        <span class="pl-ent">resources</span>:
+          <span class="pl-ent">limits</span>:
+            <span class="pl-ent">memory</span>: <span class="pl-s">500Mi</span>
+          <span class="pl-ent">requests</span>:
+            <span class="pl-ent">cpu</span>: <span class="pl-c1">100m</span>
+            <span class="pl-ent">memory</span>: <span class="pl-s">200Mi</span>
+        <span class="pl-ent">volumeMounts</span>:
+        - <span class="pl-ent">name</span>: <span class="pl-s">varlog</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/var/log</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">varlibdockercontainers</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/var/lib/docker/containers</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">config</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/fluentd/etc</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">shared-data</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/usr/local/nginx/logs</span>
+        <span class="pl-ent">securityContext</span>:
+          <span class="pl-ent">privileged</span>: <span class="pl-c1">true</span>
+      <span class="pl-ent">nodeSelector</span>:
+        <span class="pl-ent">kubernetes.io/os</span>: <span class="pl-s">linux</span>
+      <span class="pl-ent">affinity</span>:
+        <span class="pl-ent">podAntiAffinity</span>:
+          <span class="pl-ent">requiredDuringSchedulingIgnoredDuringExecution</span>:  <span class="pl-c"><span class="pl-c">#</span> Ӳ����</span>
+          - <span class="pl-ent">labelSelector</span>:
+              <span class="pl-ent">matchExpressions</span>:
+              - <span class="pl-ent">key</span>: <span class="pl-s">app</span>
+                <span class="pl-ent">operator</span>: <span class="pl-s">In</span>
+                <span class="pl-ent">values</span>:
+                - <span class="pl-s">busybox-pod</span>
+            <span class="pl-ent">topologyKey</span>: <span class="pl-s">kubernetes.io/hostname</span>
+      <span class="pl-ent">tolerations</span>:
+      - <span class="pl-ent">key</span>: <span class="pl-s">node.kubenetes.io/not-ready</span>
+        <span class="pl-ent">effect</span>: <span class="pl-s">NoExecute</span>
+        <span class="pl-ent">tolerationSeconds</span>: <span class="pl-c1">30</span>
+
+---
+<span class="pl-ent">kind</span>: <span class="pl-s">Service</span>
+<span class="pl-ent">apiVersion</span>: <span class="pl-c1">v1</span>
+<span class="pl-ent">metadata</span>:
+  <span class="pl-ent">name</span>: <span class="pl-s">nginx-helper</span>
+  <span class="pl-ent">namespace</span>: <span class="pl-s">cncp-production</span>
+<span class="pl-ent">spec</span>:
+  <span class="pl-ent">ports</span>:
+  - <span class="pl-ent">protocol</span>: <span class="pl-s">TCP</span>
+    <span class="pl-ent">port</span>: <span class="pl-c1">22</span>
+    <span class="pl-ent">targetPort</span>: <span class="pl-c1">22</span>
+    <span class="pl-ent">nodePort</span>: <span class="pl-c1">32004</span>
+  <span class="pl-ent">selector</span>:
+    <span class="pl-ent">cncp-component</span>: <span class="pl-s">nginx-helper</span>
+  <span class="pl-ent">type</span>: <span class="pl-s">NodePort</span>
+
+---
+<span class="pl-ent">kind</span>: <span class="pl-s">Deployment</span>
+<span class="pl-ent">apiVersion</span>: <span class="pl-s">apps/v1</span>
+<span class="pl-ent">metadata</span>:
+  <span class="pl-ent">name</span>: <span class="pl-s">nginx-helper</span>
+  <span class="pl-ent">namespace</span>: <span class="pl-s">cncp-production</span>
+<span class="pl-ent">spec</span>:
+  <span class="pl-ent">replicas</span>: <span class="pl-c1">1</span>
+  <span class="pl-ent">selector</span>:
+    <span class="pl-ent">matchLabels</span>:
+      <span class="pl-ent">cncp-component</span>: <span class="pl-s">nginx-helper</span>
+  <span class="pl-ent">template</span>: 
+    <span class="pl-ent">metadata</span>:
+      <span class="pl-ent">labels</span>: 
+        <span class="pl-ent">cncp-component</span>: <span class="pl-s">nginx-helper</span>
+    <span class="pl-ent">spec</span>:
+      <span class="pl-ent">volumes</span>:
+      - <span class="pl-ent">name</span>: <span class="pl-s">localtime</span>
+        <span class="pl-ent">hostPath</span>:
+          <span class="pl-ent">path</span>: <span class="pl-s">/etc/localtime</span>
+      - <span class="pl-ent">name</span>: <span class="pl-s">storage</span>
+        <span class="pl-ent">persistentVolumeClaim</span>:
+          <span class="pl-ent">claimName</span>: <span class="pl-s">nginx</span>
+      <span class="pl-ent">containers</span>:
+      - <span class="pl-ent">name</span>: <span class="pl-s">helper</span>
+        <span class="pl-ent">image</span>: <span class="pl-s">mingyangtech.com.cn/mingyang/ssh-server:v1.0.0</span>
+        <span class="pl-ent">imagePullPolicy</span>: <span class="pl-s">IfNotPresent</span>
+        <span class="pl-ent">env</span>:
+        - <span class="pl-ent">name</span>: <span class="pl-s">TZ</span>
+          <span class="pl-ent">value</span>: <span class="pl-s"><span class="pl-pds">"</span>Asia/Shanghai<span class="pl-pds">"</span></span>
+        <span class="pl-ent">ports</span>:
+        - <span class="pl-ent">containerPort</span>: <span class="pl-c1">22</span>
+        <span class="pl-ent">resources</span>:
+          <span class="pl-ent">requests</span>:
+            <span class="pl-ent">cpu</span>: <span class="pl-c1">10m</span>
+            <span class="pl-ent">memory</span>: <span class="pl-s">40Mi</span>
+          <span class="pl-ent">limits</span>:
+            <span class="pl-ent">cpu</span>: <span class="pl-c1">500m</span>
+            <span class="pl-ent">memory</span>: <span class="pl-s">2Gi</span>
+        <span class="pl-ent">volumeMounts</span>:
+        - <span class="pl-ent">name</span>: <span class="pl-s">localtime</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/etc/localtime</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">storage</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/usr/local/nginx/conf/nginxconf/</span>
+          <span class="pl-ent">subPath</span>: <span class="pl-s">usr/local/nginx/conf/nginxconf/</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">storage</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/usr/local/nginx/cert</span>
+          <span class="pl-ent">subPath</span>: <span class="pl-s">usr/local/nginx/cert</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">storage</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/usr/local/nginx/cache</span>
+          <span class="pl-ent">subPath</span>: <span class="pl-s">usr/local/nginx/cache</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">storage</span>
+          <span class="pl-ent">mountPath</span>: <span class="pl-s">/usr/local/nginx/logs</span>
+          <span class="pl-ent">subPath</span>: <span class="pl-s">usr/local/nginx/logs</span>
+        <span class="pl-ent">securityContext</span>:
+          <span class="pl-ent">privileged</span>: <span class="pl-c1">true</span>
+      <span class="pl-ent">nodeSelector</span>:
+        <span class="pl-ent">kubernetes.io/os</span>: <span class="pl-s">linux</span>
+      <span class="pl-ent">tolerations</span>:
+      - <span class="pl-ent">operator</span>: <span class="pl-s">Exists</span>
+        <span class="pl-ent">effect</span>: <span class="pl-s">NoSchedule</span>
+      - <span class="pl-ent">operator</span>: <span class="pl-s">Exists</span>
+        <span class="pl-ent">effect</span>: <span class="pl-s">NoExecute</span>
+  <span class="pl-ent">strategy</span>:
+    <span class="pl-ent">type</span>: <span class="pl-s">Recreate</span></pre></div></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+</div>
+    <div id="footer">Copyright © <span id="year"></span><a href="https://donkeytt11111.github.io/jiaxin.github.io"> 刘佳鑫笔记 </a>
+<p>
+<span id="runday"></span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a>
+</p>
+
+<script>
+if(""!=""){
+    var now=new Date();
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("year").innerHTML=now.getFullYear();
+    if(""!=""){document.getElementById("runday").innerHTML=" • "+"网站运行"+diffDay+"天"+" • ";}
+    else{document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";}
+}
+</script>
+</div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n\n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","donkeytt11111/jiaxin.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+</script>
+
+
+</html>
