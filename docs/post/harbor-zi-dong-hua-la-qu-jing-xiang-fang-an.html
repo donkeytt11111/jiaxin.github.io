@@ -61,7 +61,46 @@ for image_tag in $Image_tags;do
     mv $image_Name.tar  $Tar_File
 done
 ```
-![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/cdad1ceb-eb50-42ab-b84e-7e6fe15f9cb1)。">
+![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/cdad1ceb-eb50-42ab-b84e-7e6fe15f9cb1)
+
+👍 
+将errorlist文件修改为镜像仓库地址
+
+使用以下脚本完成errorimage拉取
+
+```shell
+#!/bin/bash
+
+# 从文件读取镜像列表
+while IFS= read -r image; do
+    echo '正在拉取镜像: $image'
+    docker pull '$image'
+
+    # 正确提取域名后面直到标签前的部分（保留斜杠后的所有内容直到冒号）
+    new_repo_name=$(echo '$image' | cut -d/ -f2- | cut -d: -f1)
+    new_tag_name=$(echo '$new_repo_name' | awk -F/ '{print $NF}')
+    echo '$new_repo_name'
+    echo '$new_tag_name'
+    version=$(echo '$image' | awk -F: '{print $NF}') # 获取版本号
+
+    # 构建新的标签（包含完整路径和版本号）
+    new_tag='${new_repo_name}:${version}'
+    
+    echo '为镜像打标签: $image -> $new_tag'
+    docker tag '$image' '$new_tag'
+
+    echo '导出镜像为tar包: $new_tag'
+    docker save '$new_tag' > '/backup/Harbor-backup/${new_tag_name}_${version}.tar'
+
+    # 删除原镜像（根据需要可选择性执行此步骤）
+    echo '删除原镜像: $image'
+    docker rmi '$image'
+    docker rmi '$new_tag'
+done < error_images.txt
+
+# 检查是否有任何操作失败
+if [ $? -eq 0 ]; then
+    echo '所有镜像已成功处理并备份。">
 <meta property="og:title" content="harbor自动化拉取镜像方案">
 <meta property="og:description" content="grep data_volume  /app/harbor/harbor.yml    #根据配置文件查找数据存储目录
 data_volume: /data
@@ -115,7 +154,46 @@ for image_tag in $Image_tags;do
     mv $image_Name.tar  $Tar_File
 done
 ```
-![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/cdad1ceb-eb50-42ab-b84e-7e6fe15f9cb1)。">
+![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/cdad1ceb-eb50-42ab-b84e-7e6fe15f9cb1)
+
+👍 
+将errorlist文件修改为镜像仓库地址
+
+使用以下脚本完成errorimage拉取
+
+```shell
+#!/bin/bash
+
+# 从文件读取镜像列表
+while IFS= read -r image; do
+    echo '正在拉取镜像: $image'
+    docker pull '$image'
+
+    # 正确提取域名后面直到标签前的部分（保留斜杠后的所有内容直到冒号）
+    new_repo_name=$(echo '$image' | cut -d/ -f2- | cut -d: -f1)
+    new_tag_name=$(echo '$new_repo_name' | awk -F/ '{print $NF}')
+    echo '$new_repo_name'
+    echo '$new_tag_name'
+    version=$(echo '$image' | awk -F: '{print $NF}') # 获取版本号
+
+    # 构建新的标签（包含完整路径和版本号）
+    new_tag='${new_repo_name}:${version}'
+    
+    echo '为镜像打标签: $image -> $new_tag'
+    docker tag '$image' '$new_tag'
+
+    echo '导出镜像为tar包: $new_tag'
+    docker save '$new_tag' > '/backup/Harbor-backup/${new_tag_name}_${version}.tar'
+
+    # 删除原镜像（根据需要可选择性执行此步骤）
+    echo '删除原镜像: $image'
+    docker rmi '$image'
+    docker rmi '$new_tag'
+done < error_images.txt
+
+# 检查是否有任何操作失败
+if [ $? -eq 0 ]; then
+    echo '所有镜像已成功处理并备份。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://donkeytt11111.github.io/jiaxin.github.io/post/harbor-zi-dong-hua-la-qu-jing-xiang-fang-an.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
@@ -217,7 +295,45 @@ Image_tags=<span class="pl-s"><span class="pl-pds">$(</span>uniq <span class="pl
     docker rmi  <span class="pl-smi">$image_tag</span>
     mv <span class="pl-smi">$image_Name</span>.tar  <span class="pl-smi">$Tar_File</span>
 <span class="pl-k">done</span></pre></div>
-<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/cdad1ceb-eb50-42ab-b84e-7e6fe15f9cb1"><img src="https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/cdad1ceb-eb50-42ab-b84e-7e6fe15f9cb1" alt="image" style="max-width: 100%;"></a></p></div>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/cdad1ceb-eb50-42ab-b84e-7e6fe15f9cb1"><img src="https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/cdad1ceb-eb50-42ab-b84e-7e6fe15f9cb1" alt="image" style="max-width: 100%;"></a></p>
+<p>👍<br>
+将errorlist文件修改为镜像仓库地址</p>
+<p>使用以下脚本完成errorimage拉取</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#!</span>/bin/bash</span>
+
+<span class="pl-c"><span class="pl-c">#</span> 从文件读取镜像列表</span>
+<span class="pl-k">while</span> IFS= <span class="pl-c1">read</span> -r image<span class="pl-k">;</span> <span class="pl-k">do</span>
+    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>正在拉取镜像: <span class="pl-smi">$image</span><span class="pl-pds">"</span></span>
+    docker pull <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$image</span><span class="pl-pds">"</span></span>
+
+    <span class="pl-c"><span class="pl-c">#</span> 正确提取域名后面直到标签前的部分（保留斜杠后的所有内容直到冒号）</span>
+    new_repo_name=<span class="pl-s"><span class="pl-pds">$(</span>echo <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$image</span><span class="pl-pds">"</span></span> <span class="pl-k">|</span> cut -d/ -f2- <span class="pl-k">|</span> cut -d: -f1<span class="pl-pds">)</span></span>
+    new_tag_name=<span class="pl-s"><span class="pl-pds">$(</span>echo <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$new_repo_name</span><span class="pl-pds">"</span></span> <span class="pl-k">|</span> awk -F/ <span class="pl-s"><span class="pl-pds">'</span>{print $NF}<span class="pl-pds">'</span></span><span class="pl-pds">)</span></span>
+    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$new_repo_name</span><span class="pl-pds">"</span></span>
+    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$new_tag_name</span><span class="pl-pds">"</span></span>
+    version=<span class="pl-s"><span class="pl-pds">$(</span>echo <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$image</span><span class="pl-pds">"</span></span> <span class="pl-k">|</span> awk -F: <span class="pl-s"><span class="pl-pds">'</span>{print $NF}<span class="pl-pds">'</span></span><span class="pl-pds">)</span></span> <span class="pl-c"><span class="pl-c">#</span> 获取版本号</span>
+
+    <span class="pl-c"><span class="pl-c">#</span> 构建新的标签（包含完整路径和版本号）</span>
+    new_tag=<span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${new_repo_name}</span>:<span class="pl-smi">${version}</span><span class="pl-pds">"</span></span>
+    
+    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>为镜像打标签: <span class="pl-smi">$image</span> -&gt; <span class="pl-smi">$new_tag</span><span class="pl-pds">"</span></span>
+    docker tag <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$image</span><span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$new_tag</span><span class="pl-pds">"</span></span>
+
+    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>导出镜像为tar包: <span class="pl-smi">$new_tag</span><span class="pl-pds">"</span></span>
+    docker save <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$new_tag</span><span class="pl-pds">"</span></span> <span class="pl-k">&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>/backup/Harbor-backup/<span class="pl-smi">${new_tag_name}</span>_<span class="pl-smi">${version}</span>.tar<span class="pl-pds">"</span></span>
+
+    <span class="pl-c"><span class="pl-c">#</span> 删除原镜像（根据需要可选择性执行此步骤）</span>
+    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>删除原镜像: <span class="pl-smi">$image</span><span class="pl-pds">"</span></span>
+    docker rmi <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$image</span><span class="pl-pds">"</span></span>
+    docker rmi <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$new_tag</span><span class="pl-pds">"</span></span>
+<span class="pl-k">done</span> <span class="pl-k">&lt;</span> error_images.txt
+
+<span class="pl-c"><span class="pl-c">#</span> 检查是否有任何操作失败</span>
+<span class="pl-k">if</span> [ <span class="pl-smi">$?</span> <span class="pl-k">-eq</span> 0 ]<span class="pl-k">;</span> <span class="pl-k">then</span>
+    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>所有镜像已成功处理并备份。<span class="pl-pds">"</span></span>
+<span class="pl-k">else</span>
+    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>操作过程中出现错误，请检查上面的输出详情。<span class="pl-pds">"</span></span>
+<span class="pl-k">fi</span></pre></div></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
 <div class="comments" id="comments"></div>

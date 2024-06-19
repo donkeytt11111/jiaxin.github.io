@@ -51,3 +51,53 @@ for image_tag in $Image_tags;do
 done
 ```
 ![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/cdad1ceb-eb50-42ab-b84e-7e6fe15f9cb1)
+
+👍 
+将errorlist文件修改为镜像仓库地址
+
+使用以下脚本完成errorimage拉取
+
+```shell
+#!/bin/bash
+
+# 从文件读取镜像列表
+while IFS= read -r image; do
+    echo "正在拉取镜像: $image"
+    docker pull "$image"
+
+    # 正确提取域名后面直到标签前的部分（保留斜杠后的所有内容直到冒号）
+    new_repo_name=$(echo "$image" | cut -d/ -f2- | cut -d: -f1)
+    new_tag_name=$(echo "$new_repo_name" | awk -F/ '{print $NF}')
+    echo "$new_repo_name"
+    echo "$new_tag_name"
+    version=$(echo "$image" | awk -F: '{print $NF}') # 获取版本号
+
+    # 构建新的标签（包含完整路径和版本号）
+    new_tag="${new_repo_name}:${version}"
+    
+    echo "为镜像打标签: $image -> $new_tag"
+    docker tag "$image" "$new_tag"
+
+    echo "导出镜像为tar包: $new_tag"
+    docker save "$new_tag" > "/backup/Harbor-backup/${new_tag_name}_${version}.tar"
+
+    # 删除原镜像（根据需要可选择性执行此步骤）
+    echo "删除原镜像: $image"
+    docker rmi "$image"
+    docker rmi "$new_tag"
+done < error_images.txt
+
+# 检查是否有任何操作失败
+if [ $? -eq 0 ]; then
+    echo "所有镜像已成功处理并备份。"
+else
+    echo "操作过程中出现错误，请检查上面的输出详情。"
+fi
+```
+
+
+
+
+
+
+
