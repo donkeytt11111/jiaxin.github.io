@@ -22,3 +22,5 @@ do
         docker image rm "$repo:$tag"
     fi
 done
+
+![image](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/27f074f3-68c8-42a6-9eec-9af23f3f6e77)
