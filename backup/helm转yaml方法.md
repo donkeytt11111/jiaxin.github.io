@@ -1,6 +1,6 @@
 #1.首先需要一个http服务器，通过docker或者在centos上直接yum install 部署都可以
 docker run -d -p 8081:80 -v /var/www:/usr/local/apache2/htdocs httpd
-这个docker命令会创建并运行一个httpd容器,参数说明如下:
+这个docker命令会创建并运行一个httpd容器,参数说明如下: 
 
 -d: 后台运行容器
 -p 8081:80: 映射容器内80端口到宿主机8081端口
