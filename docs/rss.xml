@@ -1,5 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Wed, 26 Jun 2024 07:56:12 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>集群时间同步注入器.yaml</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/ji-qun-shi-jian-tong-bu-zhu-ru-qi-.yaml.html</link><description>```yaml&#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Wed, 26 Jun 2024 08:42:50 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>超云网口定义</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/chao-yun-wang-kou-ding-yi.html</link><description>enp6s0 0000:06:00.0&#13;
+enp5s0 0000:05:00.0 带外管理&#13;
+&#13;
+enp1s0f0 0000:01:00.0 集群网络Bond&#13;
+enp1s0f1 0000:01:00.1 集群网络Bond&#13;
+&#13;
+enp7s0f0 0000:07:00.0&#13;
+enp7s0f1 0000:07:00.1&#13;
+enp7s0f2 0000:07:00.2&#13;
+enp7s0f3 0000:07:00.3。</description><guid isPermaLink="true">https://donkeytt11111.github.io/jiaxin.github.io/post/chao-yun-wang-kou-ding-yi.html</guid><pubDate>Wed, 26 Jun 2024 08:42:29 +0000</pubDate></item><item><title>集群时间同步注入器.yaml</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/ji-qun-shi-jian-tong-bu-zhu-ru-qi-.yaml.html</link><description>```yaml&#13;
 ---&#13;
 # Source: k8tz/templates/namespace.yaml&#13;
 apiVersion: v1&#13;
