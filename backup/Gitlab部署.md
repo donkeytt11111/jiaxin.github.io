@@ -29,3 +29,5 @@ services:
       - '/srv/logs:/var/log/gitlab'
       - '/srv/data:/var/opt/gitlab'
     shm_size: '256m'
+
+sudo docker exec -it gitlab grep 'Password:' /etc/gitlab/initial_root_password
