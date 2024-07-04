@@ -44,6 +44,14 @@ sudo tee /etc/docker/daemon.json <<-'EOF'
 > 'insecure-registries':['172.16.8.3']
 > }
 > EOF
+👍 密钥方法
+生成
+openssl genpkey -algorithm RSA -out 10.42.13.200.key -pkeyopt rsa_keygen_bits:2048
+生成csr
+openssl req -new -key 10.42.13.200.key -out 10.42.13.200.csr -subj '/C=XX/ST=State/L=Location/O=Organization/OU=OrganizationalUnit/CN=10.42.13.200'
+生成证书
+openssl x509 -req -days 365 -in 10.42.13.200.csr -signkey 10.42.13.200.key -out 10.42.13.200.crt -extfile <(echo 'subjectAltName = IP:10.42.13.200')
+
 。">
 <meta property="og:title" content="harbor部署">
 <meta property="og:description" content="wget https://github.com/goharbor/harbor/releases/download/v2.11.0/harbor-offline-installer-v2.11.0.tgz
@@ -81,6 +89,14 @@ sudo tee /etc/docker/daemon.json <<-'EOF'
 > 'insecure-registries':['172.16.8.3']
 > }
 > EOF
+👍 密钥方法
+生成
+openssl genpkey -algorithm RSA -out 10.42.13.200.key -pkeyopt rsa_keygen_bits:2048
+生成csr
+openssl req -new -key 10.42.13.200.key -out 10.42.13.200.csr -subj '/C=XX/ST=State/L=Location/O=Organization/OU=OrganizationalUnit/CN=10.42.13.200'
+生成证书
+openssl x509 -req -days 365 -in 10.42.13.200.csr -signkey 10.42.13.200.key -out 10.42.13.200.crt -extfile <(echo 'subjectAltName = IP:10.42.13.200')
+
 。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://donkeytt11111.github.io/jiaxin.github.io/post/harbor-bu-shu.html">
@@ -174,7 +190,14 @@ sudo tee /etc/docker/daemon.json &lt;&lt;-'EOF'</p>
 <p>{<br>
 "insecure-registries":["172.16.8.3"]<br>
 }<br>
-EOF</p>
+EOF<br>
+👍 密钥方法<br>
+生成<br>
+openssl genpkey -algorithm RSA -out 10.42.13.200.key -pkeyopt rsa_keygen_bits:2048<br>
+生成csr<br>
+openssl req -new -key 10.42.13.200.key -out 10.42.13.200.csr -subj "/C=XX/ST=State/L=Location/O=Organization/OU=OrganizationalUnit/CN=10.42.13.200"<br>
+生成证书<br>
+openssl x509 -req -days 365 -in 10.42.13.200.csr -signkey 10.42.13.200.key -out 10.42.13.200.crt -extfile &lt;(echo "subjectAltName = IP:10.42.13.200")</p>
 </blockquote></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 

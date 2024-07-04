@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Mon, 01 Jul 2024 08:20:22 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>dhcp配置文件</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/dhcp-pei-zhi-wen-jian.html</link><description>```shell&#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Thu, 04 Jul 2024 07:28:13 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>dhcp配置文件</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/dhcp-pei-zhi-wen-jian.html</link><description>```shell&#13;
 ddns-update-style none;&#13;
 subnet 172.16.8.0 netmask 255.255.255.0&#13;
 {&#13;
@@ -2418,6 +2418,14 @@ sudo tee /etc/docker/daemon.json &lt;&lt;-'EOF'&#13;
 &gt; 'insecure-registries':['172.16.8.3']&#13;
 &gt; }&#13;
 &gt; EOF&#13;
+👍 密钥方法&#13;
+生成&#13;
+openssl genpkey -algorithm RSA -out 10.42.13.200.key -pkeyopt rsa_keygen_bits:2048&#13;
+生成csr&#13;
+openssl req -new -key 10.42.13.200.key -out 10.42.13.200.csr -subj '/C=XX/ST=State/L=Location/O=Organization/OU=OrganizationalUnit/CN=10.42.13.200'&#13;
+生成证书&#13;
+openssl x509 -req -days 365 -in 10.42.13.200.csr -signkey 10.42.13.200.key -out 10.42.13.200.crt -extfile &lt;(echo 'subjectAltName = IP:10.42.13.200')&#13;
+&#13;
 。</description><guid isPermaLink="true">https://donkeytt11111.github.io/jiaxin.github.io/post/harbor-bu-shu.html</guid><pubDate>Fri, 07 Jun 2024 07:24:26 +0000</pubDate></item><item><title>禅道部署</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/shan-dao-bu-shu.html</link><description>docker pull hub.zentao.net/app/zentao:18.5 &#13;
 &#13;
 &#13;

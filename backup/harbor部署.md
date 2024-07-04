@@ -33,3 +33,11 @@ sudo tee /etc/docker/daemon.json <<-'EOF'
 > "insecure-registries":["172.16.8.3"]
 > }
 > EOF
+👍 密钥方法
+生成
+openssl genpkey -algorithm RSA -out 10.42.13.200.key -pkeyopt rsa_keygen_bits:2048
+生成csr
+openssl req -new -key 10.42.13.200.key -out 10.42.13.200.csr -subj "/C=XX/ST=State/L=Location/O=Organization/OU=OrganizationalUnit/CN=10.42.13.200"
+生成证书
+openssl x509 -req -days 365 -in 10.42.13.200.csr -signkey 10.42.13.200.key -out 10.42.13.200.crt -extfile <(echo "subjectAltName = IP:10.42.13.200")
+
