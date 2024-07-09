@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Tue, 09 Jul 2024 07:36:23 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>边缘管控罐装命令</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/bian-yuan-guan-kong-guan-zhuang-ming-ling.html</link><description>Sidero Metal Clusterctl 安装&#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Tue, 09 Jul 2024 08:20:23 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>边缘管控罐装命令</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/bian-yuan-guan-kong-guan-zhuang-ming-ling.html</link><description>Sidero Metal Clusterctl 安装&#13;
 &#13;
 export SIDERO_CONTROLLER_MANAGER_HOST_NETWORK=true&#13;
 export SIDERO_CONTROLLER_MANAGER_DEPLOYMENT_STRATEGY=Recreate&#13;
@@ -312,7 +312,7 @@ spec:&#13;
       protocol: TCP&#13;
       targetPort: 123&#13;
   type: ClusterIP&#13;
-EOF。</description><guid isPermaLink="true">https://donkeytt11111.github.io/jiaxin.github.io/post/bian-yuan-guan-kong-guan-zhuang-ming-ling.html</guid><pubDate>Tue, 09 Jul 2024 07:35:58 +0000</pubDate></item><item><title>talos</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/talos.html</link><description>0. 开始操作前，请认真阅读以下说明：&#13;
+EOF。</description><guid isPermaLink="true">https://donkeytt11111.github.io/jiaxin.github.io/post/bian-yuan-guan-kong-guan-zhuang-ming-ling.html</guid><pubDate>Tue, 09 Jul 2024 07:35:58 +0000</pubDate></item><item><title>talos硬盘挂载方法</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/talos-ying-pan-gua-zai-fang-fa.html</link><description>0. 开始操作前，请认真阅读以下说明：&#13;
 (1) 调整磁盘挂载配置会被Talos系统强制触发重启，请确保集群没有人在用后再执行！&#13;
 (2) 由于操作磁盘为高度风险操作，数据无价，请确认精神状态良好，视力正常，能看清每一个字母后再操作！&#13;
 (3) 如果在操作过程中发现返回结果异常，请立即停止操作，必要时请立即拔掉设备上的电源线，并寻求帮助！&#13;
@@ -373,7 +373,7 @@ machine:&#13;
           - rshared&#13;
           - rw&#13;
 &#13;
-确认无误后保存退出。</description><guid isPermaLink="true">https://donkeytt11111.github.io/jiaxin.github.io/post/talos.html</guid><pubDate>Tue, 09 Jul 2024 07:19:39 +0000</pubDate></item><item><title>dhcp配置文件</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/dhcp-pei-zhi-wen-jian.html</link><description>```shell&#13;
+确认无误后保存退出。</description><guid isPermaLink="true">https://donkeytt11111.github.io/jiaxin.github.io/post/talos-ying-pan-gua-zai-fang-fa.html</guid><pubDate>Tue, 09 Jul 2024 07:19:39 +0000</pubDate></item><item><title>dhcp配置文件</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/dhcp-pei-zhi-wen-jian.html</link><description>```shell&#13;
 ddns-update-style none;&#13;
 subnet 172.16.8.0 netmask 255.255.255.0&#13;
 {&#13;
