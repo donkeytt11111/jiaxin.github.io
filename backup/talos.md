@@ -96,3 +96,5 @@ harbor            harbor-database                                         Bound 
 harbor            harbor-jobservice                                       Bound    pvc-f5e3468b-ea5a-4730-9308-249e0d96a753   5Gi        RWO            openebs-sc2         24m
 harbor            harbor-redis                                            Bound    pvc-7f42effa-94c8-4027-9487-f8fdd132e4af   1Gi        RWO            openebs-sc2         24m
 harbor            harbor-registry                                         Bound    pvc-dd6d6410-7b6f-4ae1-b1aa-d1cd4ba81ecb   5Gi        RWO            openebs-sc2         24m
+
+![af44fc50ececafda6ea8e4b4ca8f4af](https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/23fbc50d-6459-4f73-9ea3-52df7535ea0b)
