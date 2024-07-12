@@ -28,6 +28,8 @@ helm install --create-namespace --namespace harbor harbor ./ \
 --set 'trivy.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
 --set 'database.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
 --set 'redis.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
---set 'exporter.nodeSelector.kubernetes\.io/hostname=cncp-ms-01'
+--set 'exporter.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
+--set harbor-core.image.repository=myharborregistry/harbor-core \
+--set harbor-core.image.tag=v2.3.0
 
 

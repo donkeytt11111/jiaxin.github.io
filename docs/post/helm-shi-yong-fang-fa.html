@@ -39,7 +39,9 @@ helm install --create-namespace --namespace harbor harbor ./ \
 --set 'trivy.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
 --set 'database.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
 --set 'redis.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
---set 'exporter.nodeSelector.kubernetes\.io/hostname=cncp-ms-01'
+--set 'exporter.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
+--set harbor-core.image.repository=myharborregistry/harbor-core \
+--set harbor-core.image.tag=v2.3.0
 
 
 。">
@@ -74,7 +76,9 @@ helm install --create-namespace --namespace harbor harbor ./ \
 --set 'trivy.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
 --set 'database.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
 --set 'redis.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
---set 'exporter.nodeSelector.kubernetes\.io/hostname=cncp-ms-01'
+--set 'exporter.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
+--set harbor-core.image.repository=myharborregistry/harbor-core \
+--set harbor-core.image.tag=v2.3.0
 
 
 。">
@@ -165,7 +169,9 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <span class="pl-s">--set 'trivy.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \</span>
 <span class="pl-s">--set 'database.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \</span>
 <span class="pl-s">--set 'redis.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \</span>
-<span class="pl-s">--set 'exporter.nodeSelector.kubernetes\.io/hostname=cncp-ms-01'</span>
+<span class="pl-s">--set 'exporter.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \</span>
+<span class="pl-s">--set harbor-core.image.repository=myharborregistry/harbor-core \</span>
+<span class="pl-s">--set harbor-core.image.tag=v2.3.0</span>
 
 </pre></div></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
