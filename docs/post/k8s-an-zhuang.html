@@ -211,7 +211,9 @@ zip -r pki_backup.zip ca.crt ca.key sa.key sa.pub front-proxy-ca.crt front-proxy
 分别在master02、master03节点上创建目录/etc/kubernetes/pki/etcd。
 mkdir -p /etc/kubernetes/pki/etcd。
 然后，将表格中所列的证书、密钥文件，从master01节点分别拷贝至master02、master03节点
-</pre></div></div>
+</pre></div>
+<p>kubeadm join 10.42.13.201:6443 --token token0.mingyangpassw0rd <br>
+--discovery-token-ca-cert-hash sha256:72b381dbb33e6cb50d1e204313b4c5b290c224f924e9962eaba43b82abeacbc8</p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
