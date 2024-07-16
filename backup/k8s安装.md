@@ -6,6 +6,7 @@ cat >>/etc/hosts<<EOF
 10.42.13.203 cncp-ms-03
 EOF
 
+hostnamectl  set-hostname cncp-ms-01
 #关闭防火墙
 systemctl disable firewalld && systemctl stop firewalld
 

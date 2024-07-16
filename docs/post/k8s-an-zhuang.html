@@ -17,6 +17,7 @@ cat >>/etc/hosts<<EOF
 10.42.13.203 cncp-ms-03
 EOF
 
+hostnamectl  set-hostname cncp-ms-01
 #关闭防火墙
 systemctl disable firewalld && systemctl stop firewalld
 
@@ -31,6 +32,7 @@ cat >>/etc/hosts<<EOF
 10.42.13.203 cncp-ms-03
 EOF
 
+hostnamectl  set-hostname cncp-ms-01
 #关闭防火墙
 systemctl disable firewalld && systemctl stop firewalld
 
@@ -101,6 +103,7 @@ cat <span class="pl-k">&gt;&gt;</span>/etc/hosts<span class="pl-s"><span class="
 <span class="pl-s">10.42.13.203 cncp-ms-03</span>
 <span class="pl-s"><span class="pl-k">EOF</span></span>
 
+hostnamectl  set-hostname cncp-ms-01
 <span class="pl-c"><span class="pl-c">#</span>关闭防火墙</span>
 systemctl disable firewalld <span class="pl-k">&amp;&amp;</span> systemctl stop firewalld
 
