@@ -193,7 +193,25 @@ kubeadm init --config kubeadm.yaml</p>
 <p>配置kubeconfig：<br>
 mkdir -p /root/.kube<br>
 cp -i /etc/kubernetes/admin.conf /root/.kube/config<br>
-chown root:root /root/.kube/config</p></div>
+chown root:root /root/.kube/config</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span>关联证书</span>
+<span class="pl-c1">cd</span> /etc/kubernetes/pki
+zip -r pki_backup.zip ca.crt ca.key sa.key sa.pub front-proxy-ca.crt front-proxy-ca.key etcd/ca.crt etcd/ca.key
+
+
+/etc/kubernetes/pki/ca.crt
+/etc/kubernetes/pki/ca.key
+/etc/kubernetes/pki/sa.key
+/etc/kubernetes/pki/sa.pub
+/etc/kubernetes/pki/front-proxy-ca.crt
+/etc/kubernetes/pki/front-proxy-ca.key
+/etc/kubernetes/pki/etcd/ca.crt
+/etc/kubernetes/pki/etcd/ca.key
+
+分别在master02、master03节点上创建目录/etc/kubernetes/pki/etcd。
+mkdir -p /etc/kubernetes/pki/etcd。
+然后，将表格中所列的证书、密钥文件，从master01节点分别拷贝至master02、master03节点
+</pre></div></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

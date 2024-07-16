@@ -108,3 +108,24 @@ kubeadm init --config kubeadm.yaml --skip-phases=addon/kube-proxy
 mkdir -p /root/.kube
 cp -i /etc/kubernetes/admin.conf /root/.kube/config
 chown root:root /root/.kube/config
+
+```shell
+#关联证书
+cd /etc/kubernetes/pki
+zip -r pki_backup.zip ca.crt ca.key sa.key sa.pub front-proxy-ca.crt front-proxy-ca.key etcd/ca.crt etcd/ca.key
+
+
+/etc/kubernetes/pki/ca.crt
+/etc/kubernetes/pki/ca.key
+/etc/kubernetes/pki/sa.key
+/etc/kubernetes/pki/sa.pub
+/etc/kubernetes/pki/front-proxy-ca.crt
+/etc/kubernetes/pki/front-proxy-ca.key
+/etc/kubernetes/pki/etcd/ca.crt
+/etc/kubernetes/pki/etcd/ca.key
+
+分别在master02、master03节点上创建目录/etc/kubernetes/pki/etcd。
+mkdir -p /etc/kubernetes/pki/etcd。
+然后，将表格中所列的证书、密钥文件，从master01节点分别拷贝至master02、master03节点
+
+```
