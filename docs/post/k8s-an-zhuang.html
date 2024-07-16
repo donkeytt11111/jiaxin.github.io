@@ -9,44 +9,38 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content="1.2.12 设置kubernetes仓库
-cat > /etc/yum.repos.d/kubernetes.repo <<EOF
-[kubernetes]
-name=Kubernetes
-baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
-enabled=1
-gpgcheck=0
-repo_gpgcheck=0
-gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
-http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+<meta name="description" content="```shell
+#修改hosts
+cat >>/etc/hosts<<EOF
+10.42.13.201 cncp-ms-01
+10.42.13.202 cncp-ms-02
+10.42.13.203 cncp-ms-03
 EOF
 
-yum makecache fast
-1.3 基础部署
-1.3.1 安装kubelet、kubectl、kubeadm
-yum install -y kubelet-1.23.10 kubectl-1.23.10 kubeadm-1.23.10。">
+#关闭防火墙
+systemctl disable firewalld && systemctl stop firewalld
+
+#关闭selinux
+修改文件/etc/selinux/config：SELINUX=disabled。">
 <meta property="og:title" content="k8s安装">
-<meta property="og:description" content="1.2.12 设置kubernetes仓库
-cat > /etc/yum.repos.d/kubernetes.repo <<EOF
-[kubernetes]
-name=Kubernetes
-baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
-enabled=1
-gpgcheck=0
-repo_gpgcheck=0
-gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
-http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+<meta property="og:description" content="```shell
+#修改hosts
+cat >>/etc/hosts<<EOF
+10.42.13.201 cncp-ms-01
+10.42.13.202 cncp-ms-02
+10.42.13.203 cncp-ms-03
 EOF
 
-yum makecache fast
-1.3 基础部署
-1.3.1 安装kubelet、kubectl、kubeadm
-yum install -y kubelet-1.23.10 kubectl-1.23.10 kubeadm-1.23.10。">
+#关闭防火墙
+systemctl disable firewalld && systemctl stop firewalld
+
+#关闭selinux
+修改文件/etc/selinux/config：SELINUX=disabled。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://donkeytt11111.github.io/jiaxin.github.io/post/k8s-an-zhuang.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
 <title>k8s安装</title>
-
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
 
 </head>
 <style>
@@ -100,23 +94,103 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"><p>1.2.12 设置kubernetes仓库<br>
-cat &gt; /etc/yum.repos.d/kubernetes.repo &lt;&lt;EOF<br>
-[kubernetes]<br>
-name=Kubernetes<br>
-baseurl=<a href="https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/" rel="nofollow">https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/</a><br>
-enabled=1<br>
-gpgcheck=0<br>
-repo_gpgcheck=0<br>
-gpgkey=<a href="http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg" rel="nofollow">http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg</a><br>
-<a href="http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg" rel="nofollow">http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</a><br>
-EOF</p>
-<p>yum makecache fast<br>
-1.3 基础部署<br>
-1.3.1 安装kubelet、kubectl、kubeadm<br>
-yum install -y kubelet-1.23.10 kubectl-1.23.10 kubeadm-1.23.10。（当前1.23最新版本为1.23.10）<br>
-systemctl enable kubelet<br>
-1.3.2 单master部署</p></div>
+<div class="markdown-body" id="postBody"><div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span>修改hosts</span>
+cat <span class="pl-k">&gt;&gt;</span>/etc/hosts<span class="pl-s"><span class="pl-k">&lt;&lt;</span><span class="pl-k">EOF</span></span>
+<span class="pl-s">10.42.13.201 cncp-ms-01</span>
+<span class="pl-s">10.42.13.202 cncp-ms-02</span>
+<span class="pl-s">10.42.13.203 cncp-ms-03</span>
+<span class="pl-s"><span class="pl-k">EOF</span></span>
+
+<span class="pl-c"><span class="pl-c">#</span>关闭防火墙</span>
+systemctl disable firewalld <span class="pl-k">&amp;&amp;</span> systemctl stop firewalld
+
+<span class="pl-c"><span class="pl-c">#</span>关闭selinux</span>
+修改文件/etc/selinux/config：SELINUX=disabled。
+
+<span class="pl-c"><span class="pl-c">#</span>时间同步</span>
+yum install -y chrony
+sed -i.bak <span class="pl-s"><span class="pl-pds">'</span>3,6d<span class="pl-pds">'</span></span> /etc/chrony.conf <span class="pl-k">&amp;&amp;</span> sed -i <span class="pl-s"><span class="pl-pds">'</span>3c server ntp1.aliyun.com iburst<span class="pl-pds">'</span></span> /etc/chrony.conf
+systemctl <span class="pl-c1">enable</span> chronyd --now <span class="pl-k">&amp;&amp;</span> systemctl restart chronyd
+chronyc sources
+
+<span class="pl-c"><span class="pl-c">#</span>安装ipvs</span>
+cat <span class="pl-k">&gt;</span> /etc/sysconfig/modules/ipvs.modules <span class="pl-s"><span class="pl-k">&lt;&lt;</span><span class="pl-k">EOF</span></span>
+<span class="pl-s">#!/bin/bash</span>
+<span class="pl-s">modprobe ip_vs</span>
+<span class="pl-s">modprobe ip_vs_rr</span>
+<span class="pl-s">modprobe ip_vs_wrr</span>
+<span class="pl-s">modprobe ip_vs_sh</span>
+<span class="pl-s">modprobe nf_conntrack</span>
+<span class="pl-s"><span class="pl-k">EOF</span></span>
+
+chmod 755 /etc/sysconfig/modules/ipvs.modules <span class="pl-k">&amp;&amp;</span> bash /etc/sysconfig/modules/ipvs.modules
+
+yum -y install ipset ipvsadm
+
+yum install -y ebtables socat ipset conntrack</pre></div>
+<div class="highlight highlight-source-shell"><pre class="notranslate">cat <span class="pl-k">&gt;</span> /etc/yum.repos.d/kubernetes.repo <span class="pl-s"><span class="pl-k">&lt;&lt;</span> <span class="pl-k">EOF</span></span>
+<span class="pl-s">[kubernetes]</span>
+<span class="pl-s">name=Kubernetes</span>
+<span class="pl-s">baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/</span>
+<span class="pl-s">enabled=1</span>
+<span class="pl-s">gpgcheck=0</span>
+<span class="pl-s">repo_gpgcheck=0</span>
+<span class="pl-s">gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg</span>
+<span class="pl-s">gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</span>
+<span class="pl-s"><span class="pl-k">EOF</span></span>
+
+
+sudo yum makecache
+</pre></div>
+<p>#基础部署<br>
+yum install -y kubelet-1.23.10 kubectl-1.23.10 kubeadm-1.23.10<br>
+systemctl enable kubelet</p>
+<div class="highlight highlight-source-yaml"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span>单机 创建yaml文件</span>
+---
+<span class="pl-ent">kind</span>: <span class="pl-s">InitConfiguration</span>
+<span class="pl-ent">apiVersion</span>: <span class="pl-s">kubeadm.k8s.io/v1beta3</span>
+<span class="pl-ent">bootstrapTokens</span>:
+- <span class="pl-ent">token</span>: <span class="pl-s">token0.mingyangpassw0rd</span>
+  <span class="pl-ent">ttl</span>: <span class="pl-c1">0s</span>
+  <span class="pl-ent">usages</span>:
+  - <span class="pl-s">signing</span>
+  - <span class="pl-s">authentication</span>
+<span class="pl-ent">nodeRegistration</span>:
+  <span class="pl-ent">name</span>: <span class="pl-s">CNCP-MS-02</span>
+  <span class="pl-ent">imagePullPolicy</span>: <span class="pl-s">IfNotPresent</span>
+  <span class="pl-ent">taints</span>: <span class="pl-c1">null</span>
+<span class="pl-ent">localAPIEndpoint</span>:
+  <span class="pl-ent">advertiseAddress</span>: <span class="pl-s">10.42.13.201</span>
+  <span class="pl-ent">bindPort</span>: <span class="pl-c1">6443</span>
+
+---
+<span class="pl-ent">kind</span>: <span class="pl-s">ClusterConfiguration</span>
+<span class="pl-ent">apiVersion</span>: <span class="pl-s">kubeadm.k8s.io/v1beta3</span>
+<span class="pl-ent">networking</span>:
+  <span class="pl-ent">podSubnet</span>: <span class="pl-s"><span class="pl-pds">"</span>10.32.0.0/16,fd00:1032::/48<span class="pl-pds">"</span></span>
+  <span class="pl-ent">serviceSubnet</span>: <span class="pl-s"><span class="pl-pds">"</span>10.64.0.0/16,fd00:1064::/112<span class="pl-pds">"</span></span>
+  <span class="pl-ent">dnsDomain</span>: <span class="pl-s">cluster.local</span>
+<span class="pl-ent">kubernetesVersion</span>: <span class="pl-s">1.23.10</span>
+<span class="pl-ent">controlPlaneEndpoint</span>: <span class="pl-s"><span class="pl-pds">"</span>10.42.13.201:6443<span class="pl-pds">"</span></span>
+<span class="pl-ent">apiServer</span>:
+  <span class="pl-ent">certSANs</span>:
+  - <span class="pl-s">10.42.13.201</span>
+  - <span class="pl-s">10.42.13.202</span>
+  - <span class="pl-s">10.42.13.203</span>
+<span class="pl-ent">certificatesDir</span>: <span class="pl-s">/etc/kubernetes/pki</span>
+<span class="pl-ent">imageRepository</span>: <span class="pl-s">registry.aliyuncs.com/google_containers</span>
+<span class="pl-ent">featureGates</span>:
+  <span class="pl-ent">IPv6DualStack</span>: <span class="pl-c1">true</span>
+<span class="pl-ent">clusterName</span>: <span class="pl-s">kubernetes</span>
+</pre></div>
+<p>执行部署<br>
+kubeadm init --config kubeadm.yaml</p>
+<p>kubeadm init --skip-phases=addon/kube-proxy</p>
+<p>kubeadm init --config kubeadm.yaml --skip-phases=addon/kube-proxy</p>
+<p>配置kubeconfig：<br>
+mkdir -p /root/.kube<br>
+cp -i /etc/kubernetes/admin.conf /root/.kube/config<br>
+chown root:root /root/.kube/config</p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
