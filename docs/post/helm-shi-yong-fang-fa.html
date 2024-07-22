@@ -45,7 +45,32 @@ helm install --create-namespace --namespace harbor harbor ./ \
 --set harbor-core.image.tag=v2.3.0
 
 
-。">
+```shell
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Service
+metadata:
+  name: harbor-loadbalancer
+  namespace: harbor
+spec:
+  selector:
+    app: harbor
+    component: nginx
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  - name: https
+    port: 443
+    targetPort: 8443
+  type: LoadBalancer
+  loadBalancerIP: 172.16.102.79
+  allocateLoadBalancerNodePorts: false
+EOF
+```。">
 <meta property="og:title" content="helm使用方法">
 <meta property="og:description" content="```yaml
 helm repo add harbor https://helm.goharbor.io
@@ -82,7 +107,32 @@ helm install --create-namespace --namespace harbor harbor ./ \
 --set harbor-core.image.tag=v2.3.0
 
 
-。">
+```shell
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Service
+metadata:
+  name: harbor-loadbalancer
+  namespace: harbor
+spec:
+  selector:
+    app: harbor
+    component: nginx
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  - name: https
+    port: 443
+    targetPort: 8443
+  type: LoadBalancer
+  loadBalancerIP: 172.16.102.79
+  allocateLoadBalancerNodePorts: false
+EOF
+```。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://donkeytt11111.github.io/jiaxin.github.io/post/helm-shi-yong-fang-fa.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
@@ -175,7 +225,32 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <span class="pl-s">--set harbor-core.image.repository=myharborregistry/harbor-core \</span>
 <span class="pl-s">--set harbor-core.image.tag=v2.3.0</span>
 
-</pre></div></div>
+
+<span class="pl-s"><span class="pl-pds">`</span><span class="pl-pds">`</span><span class="pl-pds">`</span>shell</span>
+<span class="pl-s">cat &lt;&lt;EOF | kubectl apply -f -</span>
+<span class="pl-s">apiVersion: v1</span>
+<span class="pl-s">kind: Service</span>
+<span class="pl-s">metadata:</span>
+<span class="pl-s">  name: harbor-loadbalancer</span>
+<span class="pl-s">  namespace: harbor</span>
+<span class="pl-s">spec:</span>
+<span class="pl-s">  selector:</span>
+<span class="pl-s">    app: harbor</span>
+<span class="pl-s">    component: nginx</span>
+<span class="pl-s">  ipFamilies:</span>
+<span class="pl-s">  - IPv4</span>
+<span class="pl-s">  ipFamilyPolicy: SingleStack</span>
+<span class="pl-s">  ports:</span>
+<span class="pl-s">  - name: http</span>
+<span class="pl-s">    port: 80</span>
+<span class="pl-s">    targetPort: 8080</span>
+<span class="pl-s">  - name: https</span>
+<span class="pl-s">    port: 443</span>
+<span class="pl-s">    targetPort: 8443</span>
+<span class="pl-s">  type: LoadBalancer</span>
+<span class="pl-s">  loadBalancerIP: 172.16.102.79</span>
+<span class="pl-s">  allocateLoadBalancerNodePorts: false</span>
+<span class="pl-s">EOF</span></pre></div></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

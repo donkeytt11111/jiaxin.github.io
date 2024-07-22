@@ -33,3 +33,29 @@ helm install --create-namespace --namespace harbor harbor ./ \
 --set harbor-core.image.tag=v2.3.0
 
 
+```shell
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Service
+metadata:
+  name: harbor-loadbalancer
+  namespace: harbor
+spec:
+  selector:
+    app: harbor
+    component: nginx
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  - name: https
+    port: 443
+    targetPort: 8443
+  type: LoadBalancer
+  loadBalancerIP: 172.16.102.79
+  allocateLoadBalancerNodePorts: false
+EOF
+```
