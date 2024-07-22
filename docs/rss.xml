@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Mon, 22 Jul 2024 01:17:19 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>PRC网口定义</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/PRC-wang-kou-ding-yi.html</link><description>## 明阳设备端口测序&#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Mon, 22 Jul 2024 01:18:05 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>PRC网口定义</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/PRC-wang-kou-ding-yi.html</link><description>## 明阳设备端口测序&#13;
 ### 1. MYCNP-SV-P1 (蓝色/1U/Intel 平台)&#13;
 &#13;
 | 接口位置 | 接口名称 | 接口形态 | 网卡 busPath   | 网卡系统名称  | 网卡型号                            |&#13;
@@ -108,7 +108,7 @@ helm install --create-namespace --namespace harbor harbor ./ \&#13;
 --set 'exporter.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \&#13;
 --set harbor-core.image.repository=myharborregistry/harbor-core \&#13;
 --set harbor-core.image.tag=v2.3.0&#13;
-&#13;
+```&#13;
 &#13;
 ```shell&#13;
 cat &lt;&lt;EOF | kubectl apply -f -&#13;

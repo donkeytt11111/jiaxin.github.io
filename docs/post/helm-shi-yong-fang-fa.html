@@ -43,7 +43,7 @@ helm install --create-namespace --namespace harbor harbor ./ \
 --set 'exporter.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
 --set harbor-core.image.repository=myharborregistry/harbor-core \
 --set harbor-core.image.tag=v2.3.0
-
+```
 
 ```shell
 cat <<EOF | kubectl apply -f -
@@ -105,7 +105,7 @@ helm install --create-namespace --namespace harbor harbor ./ \
 --set 'exporter.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
 --set harbor-core.image.repository=myharborregistry/harbor-core \
 --set harbor-core.image.tag=v2.3.0
-
+```
 
 ```shell
 cat <<EOF | kubectl apply -f -
@@ -223,11 +223,8 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <span class="pl-s">--set 'redis.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \</span>
 <span class="pl-s">--set 'exporter.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \</span>
 <span class="pl-s">--set harbor-core.image.repository=myharborregistry/harbor-core \</span>
-<span class="pl-s">--set harbor-core.image.tag=v2.3.0</span>
-
-
-<span class="pl-s"><span class="pl-pds">`</span><span class="pl-pds">`</span><span class="pl-pds">`</span>shell</span>
-<span class="pl-s">cat &lt;&lt;EOF | kubectl apply -f -</span>
+<span class="pl-s">--set harbor-core.image.tag=v2.3.0</span></pre></div>
+<div class="highlight highlight-source-shell"><pre class="notranslate">cat <span class="pl-s"><span class="pl-k">&lt;&lt;</span><span class="pl-k">EOF</span> | kubectl apply -f -</span>
 <span class="pl-s">apiVersion: v1</span>
 <span class="pl-s">kind: Service</span>
 <span class="pl-s">metadata:</span>
@@ -250,7 +247,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <span class="pl-s">  type: LoadBalancer</span>
 <span class="pl-s">  loadBalancerIP: 172.16.102.79</span>
 <span class="pl-s">  allocateLoadBalancerNodePorts: false</span>
-<span class="pl-s">EOF</span></pre></div></div>
+<span class="pl-s"><span class="pl-k">EOF</span></span></pre></div></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

@@ -31,7 +31,7 @@ helm install --create-namespace --namespace harbor harbor ./ \
 --set 'exporter.nodeSelector.kubernetes\.io/hostname=cncp-ms-01' \
 --set harbor-core.image.repository=myharborregistry/harbor-core \
 --set harbor-core.image.tag=v2.3.0
-
+```
 
 ```shell
 cat <<EOF | kubectl apply -f -
