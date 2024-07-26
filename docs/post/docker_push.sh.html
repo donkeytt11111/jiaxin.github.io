@@ -101,7 +101,7 @@ done
 <meta property="og:url" content="https://donkeytt11111.github.io/jiaxin.github.io/post/docker_push.sh.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
 <title>docker_push.sh</title>
-<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
 
 
 </head>
@@ -156,45 +156,46 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"><div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#!</span>/bin/bash</span>
+<div class="markdown-body" id="postBody"><pre lang="shell" class="notranslate"><code class="notranslate">#!/bin/bash
 
-<span class="pl-c"><span class="pl-c">#</span> 定义目标仓库前缀</span>
-TARGET_IP=<span class="pl-s"><span class="pl-pds">"</span>172.16.8.3<span class="pl-pds">"</span></span>
+# 定义目标仓库前缀
+TARGET_IP="172.16.8.3"
 
-<span class="pl-c"><span class="pl-c">#</span> 获取所有本地镜像的信息</span>
-IMAGES=<span class="pl-s"><span class="pl-pds">$(</span>docker images --format <span class="pl-s"><span class="pl-pds">"</span>{{.Repository}}:{{.Tag}}<span class="pl-pds">"</span></span><span class="pl-pds">)</span></span>
+# 获取所有本地镜像的信息
+IMAGES=$(docker images --format "{{.Repository}}:{{.Tag}}")
 
-<span class="pl-c"><span class="pl-c">#</span> 遍历所有本地镜像</span>
-<span class="pl-k">for</span> <span class="pl-smi">IMAGE</span> <span class="pl-k">in</span> <span class="pl-smi">$IMAGES</span>
-<span class="pl-k">do</span>
-    <span class="pl-c"><span class="pl-c">#</span> 获取镜像的原始仓库和标签</span>
-    REPO=<span class="pl-s"><span class="pl-pds">$(</span>echo <span class="pl-smi">$IMAGE</span> <span class="pl-k">|</span> cut -d<span class="pl-s"><span class="pl-pds">'</span>:<span class="pl-pds">'</span></span> -f1<span class="pl-pds">)</span></span>
-    TAG=<span class="pl-s"><span class="pl-pds">$(</span>echo <span class="pl-smi">$IMAGE</span> <span class="pl-k">|</span> cut -d<span class="pl-s"><span class="pl-pds">'</span>:<span class="pl-pds">'</span></span> -f2<span class="pl-pds">)</span></span>
+# 遍历所有本地镜像
+for IMAGE in $IMAGES
+do
+    # 获取镜像的原始仓库和标签
+    REPO=$(echo $IMAGE | cut -d':' -f1)
+    TAG=$(echo $IMAGE | cut -d':' -f2)
 
-    <span class="pl-c"><span class="pl-c">#</span> 构造新的仓库地址</span>
-    NEW_REPO=<span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$TARGET_IP</span>/<span class="pl-smi">$REPO</span><span class="pl-pds">"</span></span>
+    # 构造新的仓库地址
+    NEW_REPO="$TARGET_IP/$REPO"
 
-    <span class="pl-c"><span class="pl-c">#</span> 构造新的完整标签</span>
-    NEW_IMAGE=<span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$NEW_REPO</span>:<span class="pl-smi">$TAG</span><span class="pl-pds">"</span></span>
+    # 构造新的完整标签
+    NEW_IMAGE="$NEW_REPO:$TAG"
 
-    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>Tagging image <span class="pl-smi">$IMAGE</span> as <span class="pl-smi">$NEW_IMAGE</span><span class="pl-pds">"</span></span>
-    docker tag <span class="pl-smi">$IMAGE</span> <span class="pl-smi">$NEW_IMAGE</span>
+    echo "Tagging image $IMAGE as $NEW_IMAGE"
+    docker tag $IMAGE $NEW_IMAGE
 
-    <span class="pl-k">if</span> [ <span class="pl-smi">$?</span> <span class="pl-k">-eq</span> 0 ]<span class="pl-k">;</span> <span class="pl-k">then</span>
-        <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>Successfully tagged <span class="pl-smi">$IMAGE</span> as <span class="pl-smi">$NEW_IMAGE</span><span class="pl-pds">"</span></span>
+    if [ $? -eq 0 ]; then
+        echo "Successfully tagged $IMAGE as $NEW_IMAGE"
 
-        <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>Pushing image <span class="pl-smi">$NEW_IMAGE</span> to remote repository...<span class="pl-pds">"</span></span>
-        docker push <span class="pl-smi">$NEW_IMAGE</span>
+        echo "Pushing image $NEW_IMAGE to remote repository..."
+        docker push $NEW_IMAGE
 
-        <span class="pl-k">if</span> [ <span class="pl-smi">$?</span> <span class="pl-k">-eq</span> 0 ]<span class="pl-k">;</span> <span class="pl-k">then</span>
-            <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>Successfully pushed <span class="pl-smi">$NEW_IMAGE</span><span class="pl-pds">"</span></span>
-        <span class="pl-k">else</span>
-            <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>Failed to push <span class="pl-smi">$NEW_IMAGE</span><span class="pl-pds">"</span></span>
-        <span class="pl-k">fi</span>
-    <span class="pl-k">else</span>
-        <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>Failed to tag <span class="pl-smi">$IMAGE</span><span class="pl-pds">"</span></span>
-    <span class="pl-k">fi</span>
-<span class="pl-k">done</span></pre></div>
+        if [ $? -eq 0 ]; then
+            echo "Successfully pushed $NEW_IMAGE"
+        else
+            echo "Failed to push $NEW_IMAGE"
+        fi
+    else
+        echo "Failed to tag $IMAGE"
+    fi
+done
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/cb4089e5-c5b0-4687-999d-d58a8c97050b"><img src="https://github.com/donkeytt11111/jiaxin.github.io/assets/167744103/cb4089e5-c5b0-4687-999d-d58a8c97050b" alt="image" style="max-width: 100%;"></a></p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
