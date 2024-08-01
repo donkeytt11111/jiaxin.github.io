@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Thu, 01 Aug 2024 01:50:47 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>sql_init</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/sql_init.html</link><description>psql -h 172.16.102.147 -p 32002 -U root&#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Thu, 01 Aug 2024 02:47:22 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>sql_init</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/sql_init.html</link><description>psql -h 172.16.102.147 -p 32002 -U root&#13;
 &#13;
 Passw0rd@MY&#13;
 &#13;
@@ -28,6 +28,12 @@ root=# GRANT ALL PRIVILEGES ON DATABASE kea TO kea;&#13;
 root=# \q&#13;
 &#13;
 psql -h 172.16.102.118 -p 32002  -d kea -U kea -f dhcpdb_create.pgsql&#13;
+&#13;
+ALTER DATABASE kea SET timezone TO 'Asia/Shanghai';&#13;
+&#13;
+kubectl rollout restart statefulset -n cncp-system&#13;
+&#13;
+&#13;
 &#13;
 &#13;
 &#13;

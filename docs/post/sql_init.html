@@ -40,6 +40,12 @@ root=# \q
 
 psql -h 172.16.102.118 -p 32002  -d kea -U kea -f dhcpdb_create.pgsql
 
+ALTER DATABASE kea SET timezone TO 'Asia/Shanghai';
+
+kubectl rollout restart statefulset -n cncp-system
+
+
+
 
 
 
@@ -74,6 +80,12 @@ root=# GRANT ALL PRIVILEGES ON DATABASE kea TO kea;
 root=# \q
 
 psql -h 172.16.102.118 -p 32002  -d kea -U kea -f dhcpdb_create.pgsql
+
+ALTER DATABASE kea SET timezone TO 'Asia/Shanghai';
+
+kubectl rollout restart statefulset -n cncp-system
+
+
 
 
 
@@ -160,7 +172,9 @@ root=# create user kea with password  'Passw0rd@MY';<br>
 root=# GRANT ALL PRIVILEGES ON DATABASE kea TO kea;<br>
 退出<br>
 root=# \q</p>
-<p>psql -h 172.16.102.118 -p 32002  -d kea -U kea -f dhcpdb_create.pgsql</p></div>
+<p>psql -h 172.16.102.118 -p 32002  -d kea -U kea -f dhcpdb_create.pgsql</p>
+<p>ALTER DATABASE kea SET timezone TO 'Asia/Shanghai';</p>
+<p>kubectl rollout restart statefulset -n cncp-system</p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

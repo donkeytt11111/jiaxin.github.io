@@ -28,6 +28,12 @@ root=# \q
 
 psql -h 172.16.102.118 -p 32002  -d kea -U kea -f dhcpdb_create.pgsql
 
+ALTER DATABASE kea SET timezone TO 'Asia/Shanghai';
+
+kubectl rollout restart statefulset -n cncp-system
+
+
+
 
 
 
