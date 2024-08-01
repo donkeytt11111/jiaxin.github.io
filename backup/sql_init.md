@@ -6,5 +6,6 @@ show timezone;
 
 set time zone 'Asia/Shanghai';
 
+SELECT * FROM pg_timezone_names WHERE name = current_setting('TIMEZONE');
 
 
