@@ -7,6 +7,12 @@ cat >>/etc/hosts<<EOF
 EOF
 
 hostnamectl  set-hostname cncp-ms-01
+
+#关闭selinux
+sudo setenforce 0 #临时
+sudo sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+reboot
+
 #关闭防火墙
 systemctl disable firewalld && systemctl stop firewalld
 

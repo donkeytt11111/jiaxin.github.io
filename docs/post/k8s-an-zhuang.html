@@ -19,6 +19,12 @@ cat >>/etc/hosts<<EOF
 EOF
 
 hostnamectl  set-hostname cncp-ms-01
+
+#关闭selinux
+sudo setenforce 0 #临时
+sudo sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+reboot
+
 #关闭防火墙
 systemctl disable firewalld && systemctl stop firewalld
 
@@ -34,6 +40,12 @@ cat >>/etc/hosts<<EOF
 EOF
 
 hostnamectl  set-hostname cncp-ms-01
+
+#关闭selinux
+sudo setenforce 0 #临时
+sudo sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+reboot
+
 #关闭防火墙
 systemctl disable firewalld && systemctl stop firewalld
 
@@ -106,6 +118,12 @@ cat <span class="pl-k">&gt;&gt;</span>/etc/hosts<span class="pl-s"><span class="
 <span class="pl-s"><span class="pl-k">EOF</span></span>
 
 hostnamectl  set-hostname cncp-ms-01
+
+<span class="pl-c"><span class="pl-c">#</span>关闭selinux</span>
+sudo setenforce 0 <span class="pl-c"><span class="pl-c">#</span>临时</span>
+sudo sed -i <span class="pl-s"><span class="pl-pds">'</span>s/SELINUX=enforcing/SELINUX=disabled/<span class="pl-pds">'</span></span> /etc/selinux/config
+reboot
+
 <span class="pl-c"><span class="pl-c">#</span>关闭防火墙</span>
 systemctl disable firewalld <span class="pl-k">&amp;&amp;</span> systemctl stop firewalld
 
