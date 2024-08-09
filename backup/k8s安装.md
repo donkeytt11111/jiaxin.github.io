@@ -132,3 +132,15 @@ mkdir -p /etc/kubernetes/pki/etcd。
 
 kubeadm join 10.42.13.201:6443 --token token0.mingyangpassw0rd \
 	--discovery-token-ca-cert-hash sha256:72b381dbb33e6cb50d1e204313b4c5b290c224f924e9962eaba43b82abeacbc8
+
+👍 异常处理
+rm -rf /etc/kubernetes
+rm -rf /var/lib/etcd
+rm -rf /var/lib/kubelet
+rm -rf /var/lib/cni
+rm -rf /etc/cni/net.d
+iptables -F
+iptables -t nat -F
+iptables -t mangle -F
+ipvsadm --clear
+kubeadm reset

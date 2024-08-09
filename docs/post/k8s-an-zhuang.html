@@ -215,7 +215,18 @@ mkdir -p /etc/kubernetes/pki/etcd。
 然后，将表格中所列的证书、密钥文件，从master01节点分别拷贝至master02、master03节点
 </pre></div>
 <p>kubeadm join 10.42.13.201:6443 --token token0.mingyangpassw0rd <br>
---discovery-token-ca-cert-hash sha256:72b381dbb33e6cb50d1e204313b4c5b290c224f924e9962eaba43b82abeacbc8</p></div>
+--discovery-token-ca-cert-hash sha256:72b381dbb33e6cb50d1e204313b4c5b290c224f924e9962eaba43b82abeacbc8</p>
+<p>👍 异常处理<br>
+rm -rf /etc/kubernetes<br>
+rm -rf /var/lib/etcd<br>
+rm -rf /var/lib/kubelet<br>
+rm -rf /var/lib/cni<br>
+rm -rf /etc/cni/net.d<br>
+iptables -F<br>
+iptables -t nat -F<br>
+iptables -t mangle -F<br>
+ipvsadm --clear<br>
+kubeadm reset</p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
