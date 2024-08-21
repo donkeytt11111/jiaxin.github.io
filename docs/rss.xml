@@ -1,5 +1,24 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Wed, 21 Aug 2024 08:37:41 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>docker镜像源</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/docker-jing-xiang-yuan.html</link><description>{&#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>刘佳鑫笔记</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link><description>欢迎您</description><copyright>刘佳鑫笔记</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://donkeytt11111.github.io/jiaxin.github.io</link></image><lastBuildDate>Wed, 21 Aug 2024 08:41:41 +0000</lastBuildDate><managingEditor>刘佳鑫笔记</managingEditor><ttl>60</ttl><webMaster>刘佳鑫笔记</webMaster><item><title>常用配置</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/chang-yong-pei-zhi.html</link><description>```shell&#13;
+#!/bin/bash&#13;
+&#13;
+# 打开 .bashrc 文件并添加配置&#13;
+echo '&#13;
+export CLICOLOR=1&#13;
+export LSCOLORS=gxfxcxdxbxegedabagacad&#13;
+export PS1='\[\e[01;33m\][\[\e[01;32m\]\u\[\e[01;33m\]@\t]: \[\e[01;36m\]\w \[\e[01;32m\]\$ '&#13;
+alias dps='docker ps --format \'table {{.ID}}\\t{{.Image}}\\t{{.Ports}}\\t{{.Status}}\\t{{.Names}}\''&#13;
+alias dis='docker images'&#13;
+alias dos='docker-compose'&#13;
+alias tl='talosctl'&#13;
+alias kl='kubectl'&#13;
+alias sl='systemctl'&#13;
+unalias ls 2&gt;/dev/null&#13;
+alias ls='/bin/ls'&#13;
+' &gt;&gt; ~/.bashrc&#13;
+&#13;
+# 重新加载 .bashrc 文件&#13;
+source ~/.bashrc。</description><guid isPermaLink="true">https://donkeytt11111.github.io/jiaxin.github.io/post/chang-yong-pei-zhi.html</guid><pubDate>Wed, 21 Aug 2024 08:41:13 +0000</pubDate></item><item><title>docker镜像源</title><link>https://donkeytt11111.github.io/jiaxin.github.io/post/docker-jing-xiang-yuan.html</link><description>{&#13;
     'registry-mirrors': [&#13;
         'https://hub.uuuadc.top',&#13;
         'https://docker.anyhub.us.kg',&#13;
