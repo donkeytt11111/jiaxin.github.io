@@ -469,35 +469,35 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <div id="content">
 <div class="markdown-body" id="postBody"><div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">time</span>
 <span class="pl-k">import</span> <span class="pl-s1">unittest</span>
-<span class="pl-k">from</span> <span class="pl-s1">config</span> <span class="pl-k">import</span> <span class="pl-v">BASE_URL</span>
+<span class="pl-k">from</span> <span class="pl-s1">config</span> <span class="pl-k">import</span> <span class="pl-c1">BASE_URL</span>
 <span class="pl-k">from</span> <span class="pl-s1">selenium</span>.<span class="pl-s1">webdriver</span>.<span class="pl-s1">support</span>.<span class="pl-s1">ui</span> <span class="pl-k">import</span> <span class="pl-v">Select</span>
 <span class="pl-k">from</span> <span class="pl-s1">selenium</span>.<span class="pl-s1">webdriver</span>.<span class="pl-s1">common</span>.<span class="pl-s1">by</span> <span class="pl-k">import</span> <span class="pl-v">By</span>
 <span class="pl-k">from</span> <span class="pl-s1">selenium</span>.<span class="pl-s1">webdriver</span>.<span class="pl-s1">support</span>.<span class="pl-s1">ui</span> <span class="pl-k">import</span> <span class="pl-v">WebDriverWait</span>
-<span class="pl-k">from</span> <span class="pl-s1">selenium</span>.<span class="pl-s1">webdriver</span>.<span class="pl-s1">support</span> <span class="pl-k">import</span> <span class="pl-s1">expected_conditions</span> <span class="pl-k">as</span> <span class="pl-v">EC</span>
+<span class="pl-k">from</span> <span class="pl-s1">selenium</span>.<span class="pl-s1">webdriver</span>.<span class="pl-s1">support</span> <span class="pl-k">import</span> <span class="pl-s1">expected_conditions</span> <span class="pl-k">as</span> <span class="pl-c1">EC</span>
 <span class="pl-k">from</span> <span class="pl-s1">selenium</span> <span class="pl-k">import</span> <span class="pl-s1">webdriver</span>
 <span class="pl-k">from</span> <span class="pl-s1">selenium</span>.<span class="pl-s1">webdriver</span>.<span class="pl-s1">chrome</span>.<span class="pl-s1">service</span> <span class="pl-k">import</span> <span class="pl-v">Service</span>
 <span class="pl-k">from</span> <span class="pl-s1">selenium</span>.<span class="pl-s1">webdriver</span>.<span class="pl-s1">common</span>.<span class="pl-s1">by</span> <span class="pl-k">import</span> <span class="pl-v">By</span>
 <span class="pl-k">from</span> <span class="pl-s1">selenium</span>.<span class="pl-s1">webdriver</span>.<span class="pl-s1">support</span>.<span class="pl-s1">ui</span> <span class="pl-k">import</span> <span class="pl-v">WebDriverWait</span>
-<span class="pl-k">from</span> <span class="pl-s1">selenium</span>.<span class="pl-s1">webdriver</span>.<span class="pl-s1">support</span> <span class="pl-k">import</span> <span class="pl-s1">expected_conditions</span> <span class="pl-k">as</span> <span class="pl-v">EC</span>
+<span class="pl-k">from</span> <span class="pl-s1">selenium</span>.<span class="pl-s1">webdriver</span>.<span class="pl-s1">support</span> <span class="pl-k">import</span> <span class="pl-s1">expected_conditions</span> <span class="pl-k">as</span> <span class="pl-c1">EC</span>
 
-<span class="pl-k">class</span> <span class="pl-v">HarborTest</span>(<span class="pl-s1">unittest</span>.<span class="pl-v">TestCase</span>):
+<span class="pl-k">class</span> <span class="pl-v">HarborTest</span>(<span class="pl-s1">unittest</span>.<span class="pl-c1">TestCase</span>):
     <span class="pl-en">@<span class="pl-s1">classmethod</span></span>
     <span class="pl-k">def</span> <span class="pl-en">setUpClass</span>(<span class="pl-s1">cls</span>):
-        <span class="pl-s1">service</span> <span class="pl-c1">=</span> <span class="pl-v">Service</span>(<span class="pl-s">'C:<span class="pl-cce">\\</span>chromedriver.exe'</span>)  <span class="pl-c"># 替换为你的chromedriver路径</span>
-        <span class="pl-s1">options</span> <span class="pl-c1">=</span> <span class="pl-s1">webdriver</span>.<span class="pl-v">ChromeOptions</span>()
-        <span class="pl-s1">options</span>.<span class="pl-en">add_argument</span>(<span class="pl-s">'--ignore-certificate-errors'</span>)
-        <span class="pl-s1">cls</span>.<span class="pl-s1">driver</span> <span class="pl-c1">=</span> <span class="pl-s1">webdriver</span>.<span class="pl-v">Chrome</span>(<span class="pl-s1">service</span><span class="pl-c1">=</span><span class="pl-s1">service</span>, <span class="pl-s1">options</span><span class="pl-c1">=</span><span class="pl-s1">options</span>)
-        <span class="pl-s1">cls</span>.<span class="pl-s1">driver</span>.<span class="pl-en">maximize_window</span>()
+        <span class="pl-s1">service</span> <span class="pl-c1">=</span> <span class="pl-en">Service</span>(<span class="pl-s">'C:<span class="pl-cce">\\</span>chromedriver.exe'</span>)  <span class="pl-c"># 替换为你的chromedriver路径</span>
+        <span class="pl-s1">options</span> <span class="pl-c1">=</span> <span class="pl-s1">webdriver</span>.<span class="pl-c1">ChromeOptions</span>()
+        <span class="pl-s1">options</span>.<span class="pl-c1">add_argument</span>(<span class="pl-s">'--ignore-certificate-errors'</span>)
+        <span class="pl-s1">cls</span>.<span class="pl-c1">driver</span> <span class="pl-c1">=</span> <span class="pl-s1">webdriver</span>.<span class="pl-c1">Chrome</span>(<span class="pl-s1">service</span><span class="pl-c1">=</span><span class="pl-s1">service</span>, <span class="pl-s1">options</span><span class="pl-c1">=</span><span class="pl-s1">options</span>)
+        <span class="pl-s1">cls</span>.<span class="pl-c1">driver</span>.<span class="pl-c1">maximize_window</span>()
 
     <span class="pl-en">@<span class="pl-s1">classmethod</span></span>
     <span class="pl-k">def</span> <span class="pl-en">tearDownClass</span>(<span class="pl-s1">cls</span>):
-        <span class="pl-s1">cls</span>.<span class="pl-s1">driver</span>.<span class="pl-en">quit</span>()
+        <span class="pl-s1">cls</span>.<span class="pl-c1">driver</span>.<span class="pl-c1">quit</span>()
 
     <span class="pl-k">def</span> <span class="pl-en">test_harbor_operations</span>(<span class="pl-s1">self</span>):
-        <span class="pl-s1">driver</span> <span class="pl-c1">=</span> <span class="pl-s1">self</span>.<span class="pl-s1">driver</span>
+        <span class="pl-s1">driver</span> <span class="pl-c1">=</span> <span class="pl-s1">self</span>.<span class="pl-c1">driver</span>
 
         <span class="pl-c"># 访问并处理证书警告</span>
-        <span class="pl-s1">driver</span>.<span class="pl-en">get</span>(<span class="pl-v">BASE_URL</span>)
+        <span class="pl-s1">driver</span>.<span class="pl-c1">get</span>(<span class="pl-c1">BASE_URL</span>)
         <span class="pl-c"># advanced_button = WebDriverWait(driver, 10).until(</span>
         <span class="pl-c">#     EC.element_to_be_clickable((By.XPATH, '//*[@id="advancedButton"]'))</span>
         <span class="pl-c"># )</span>
@@ -510,79 +510,79 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
         <span class="pl-s">"""</span>
 <span class="pl-s">        登录</span>
 <span class="pl-s">        """</span>
-        <span class="pl-s1">username_field</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="login_username"]'</span>))
+        <span class="pl-s1">username_field</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="login_username"]'</span>))
         )
-        <span class="pl-s1">username_field</span>.<span class="pl-en">send_keys</span>(<span class="pl-s">'admin'</span>)
-        <span class="pl-s1">password_field</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="login_password"]'</span>))
+        <span class="pl-s1">username_field</span>.<span class="pl-c1">send_keys</span>(<span class="pl-s">'admin'</span>)
+        <span class="pl-s1">password_field</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="login_password"]'</span>))
         )
-        <span class="pl-s1">password_field</span>.<span class="pl-en">send_keys</span>(<span class="pl-s">'Harbor12345'</span>)
-        <span class="pl-s1">login_button</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">ID</span>, <span class="pl-s">'log_in'</span>))
+        <span class="pl-s1">password_field</span>.<span class="pl-c1">send_keys</span>(<span class="pl-s">'Harbor12345'</span>)
+        <span class="pl-s1">login_button</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">ID</span>, <span class="pl-s">'log_in'</span>))
         )
-        <span class="pl-s1">login_button</span>.<span class="pl-en">click</span>()
-        <span class="pl-s1">time</span>.<span class="pl-en">sleep</span>(<span class="pl-c1">5</span>)  <span class="pl-c"># 等待登录完成</span>
+        <span class="pl-s1">login_button</span>.<span class="pl-c1">click</span>()
+        <span class="pl-s1">time</span>.<span class="pl-c1">sleep</span>(<span class="pl-c1">5</span>)  <span class="pl-c"># 等待登录完成</span>
 
         <span class="pl-s">"""</span>
 <span class="pl-s">        仓库管理</span>
 <span class="pl-s">        """</span>
-        <span class="pl-s1">repository_management_button</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'/html/body/harbor-app/harbor-shell/clr-main-container/div/clr-vertical-nav/div/div[1]/clr-vertical-nav-group/div[2]/clr-vertical-nav-group-children/a[3]/span'</span>))
+        <span class="pl-s1">repository_management_button</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'/html/body/harbor-app/harbor-shell/clr-main-container/div/clr-vertical-nav/div/div[1]/clr-vertical-nav-group/div[2]/clr-vertical-nav-group-children/a[3]/span'</span>))
         )
-        <span class="pl-s1">repository_management_button</span>.<span class="pl-en">click</span>()
-        <span class="pl-s1">new_button</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="add"]'</span>))
+        <span class="pl-s1">repository_management_button</span>.<span class="pl-c1">click</span>()
+        <span class="pl-s1">new_button</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="add"]'</span>))
         )
-        <span class="pl-s1">new_button</span>.<span class="pl-en">click</span>()
-        <span class="pl-s1">destination_name_field</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="destination_name"]'</span>))
+        <span class="pl-s1">new_button</span>.<span class="pl-c1">click</span>()
+        <span class="pl-s1">destination_name_field</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="destination_name"]'</span>))
         )
-        <span class="pl-s1">destination_name_field</span>.<span class="pl-en">send_keys</span>(<span class="pl-s">'test'</span>)
-        <span class="pl-s1">destination_url_field</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="destination_url"]'</span>))
+        <span class="pl-s1">destination_name_field</span>.<span class="pl-c1">send_keys</span>(<span class="pl-s">'test'</span>)
+        <span class="pl-s1">destination_url_field</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="destination_url"]'</span>))
         )
-        <span class="pl-s1">destination_url_field</span>.<span class="pl-en">send_keys</span>(<span class="pl-s">'https://172.16.8.201'</span>)
+        <span class="pl-s1">destination_url_field</span>.<span class="pl-c1">send_keys</span>(<span class="pl-s">'https://172.16.8.201'</span>)
 
-        <span class="pl-s1">usr_exit</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="destination_access_key"]'</span>))
+        <span class="pl-s1">usr_exit</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="destination_access_key"]'</span>))
         )
-        <span class="pl-s1">usr_exit</span>.<span class="pl-en">send_keys</span>(<span class="pl-s">'admin'</span>)
+        <span class="pl-s1">usr_exit</span>.<span class="pl-c1">send_keys</span>(<span class="pl-s">'admin'</span>)
 
-        <span class="pl-s1">destination_pass_field</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="destination_password"]'</span>))
+        <span class="pl-s1">destination_pass_field</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="destination_password"]'</span>))
         )
-        <span class="pl-s1">destination_pass_field</span>.<span class="pl-en">send_keys</span>(<span class="pl-s">'Harbor12345'</span>)
+        <span class="pl-s1">destination_pass_field</span>.<span class="pl-c1">send_keys</span>(<span class="pl-s">'Harbor12345'</span>)
 
-        <span class="pl-s1">uncheck_button</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'/html/body/harbor-app/harbor-shell/clr-main-container/div/div/hbr-endpoint/div/hbr-create-edit-endpoint/clr-modal/div/div[2]/div[2]/div/div[2]/div/form/clr-checkbox-container/div/clr-checkbox-wrapper/label'</span>))
+        <span class="pl-s1">uncheck_button</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'/html/body/harbor-app/harbor-shell/clr-main-container/div/div/hbr-endpoint/div/hbr-create-edit-endpoint/clr-modal/div/div[2]/div[2]/div/div[2]/div/form/clr-checkbox-container/div/clr-checkbox-wrapper/label'</span>))
         )
-        <span class="pl-s1">uncheck_button</span>.<span class="pl-en">click</span>()
-        <span class="pl-s1">submit_button</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'/html/body/harbor-app/harbor-shell/clr-main-container/div/div/hbr-endpoint/div/hbr-create-edit-endpoint/clr-modal/div/div[2]/div[2]/div/div[3]/button[3]/span'</span>))
+        <span class="pl-s1">uncheck_button</span>.<span class="pl-c1">click</span>()
+        <span class="pl-s1">submit_button</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'/html/body/harbor-app/harbor-shell/clr-main-container/div/div/hbr-endpoint/div/hbr-create-edit-endpoint/clr-modal/div/div[2]/div[2]/div/div[3]/button[3]/span'</span>))
         )
-        <span class="pl-s1">submit_button</span>.<span class="pl-en">click</span>()
+        <span class="pl-s1">submit_button</span>.<span class="pl-c1">click</span>()
 
         <span class="pl-c"># 复制管理功能</span>
-        <span class="pl-s1">new_replication_rule_button</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'/html/body/harbor-app/harbor-shell/clr-main-container/div/clr-vertical-nav/div/div[1]/clr-vertical-nav-group/div[2]/clr-vertical-nav-group-children/a[4]/span'</span>))
+        <span class="pl-s1">new_replication_rule_button</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'/html/body/harbor-app/harbor-shell/clr-main-container/div/clr-vertical-nav/div/div[1]/clr-vertical-nav-group/div[2]/clr-vertical-nav-group-children/a[4]/span'</span>))
         )
-        <span class="pl-s1">new_replication_rule_button</span>.<span class="pl-en">click</span>()
+        <span class="pl-s1">new_replication_rule_button</span>.<span class="pl-c1">click</span>()
 
-        <span class="pl-s1">new_replication_exit_button</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="new_replication_rule_id"]'</span>))
+        <span class="pl-s1">new_replication_exit_button</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="new_replication_rule_id"]'</span>))
         )
-        <span class="pl-s1">new_replication_exit_button</span>.<span class="pl-en">click</span>()
+        <span class="pl-s1">new_replication_exit_button</span>.<span class="pl-c1">click</span>()
 
-        <span class="pl-s1">init_button</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'/html/body/harbor-app/harbor-shell/clr-main-container/div/div/total-replication/div/hbr-replication/div/hbr-create-edit-rule/clr-modal/div/div[2]/div[2]/div/div[2]/div/form/clr-radio-container/div/clr-radio-wrapper[2]/label'</span>))
+        <span class="pl-s1">init_button</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'/html/body/harbor-app/harbor-shell/clr-main-container/div/div/total-replication/div/hbr-replication/div/hbr-create-edit-rule/clr-modal/div/div[2]/div[2]/div/div[2]/div/form/clr-radio-container/div/clr-radio-wrapper[2]/label'</span>))
         )
-        <span class="pl-s1">init_button</span>.<span class="pl-en">click</span>()
+        <span class="pl-s1">init_button</span>.<span class="pl-c1">click</span>()
 
-        <span class="pl-s1">rule_name_field</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="ruleName"]'</span>))
+        <span class="pl-s1">rule_name_field</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="ruleName"]'</span>))
         )
-        <span class="pl-s1">rule_name_field</span>.<span class="pl-en">send_keys</span>(<span class="pl-s">'test'</span>)
+        <span class="pl-s1">rule_name_field</span>.<span class="pl-c1">send_keys</span>(<span class="pl-s">'test'</span>)
         <span class="pl-c"># target_repo_dropdown = WebDriverWait(driver, 10).until(</span>
         <span class="pl-c">#     EC.element_to_be_clickable((By.XPATH, '/html/body/harbor-app/harbor-shell/clr-main-container/div/div/total-replication/div/hbr-replication/div/hbr-create-edit-rule/clr-modal/div/div[2]/div[2]/div/div[2]/div/form/div[3]/div/div[2]'))</span>
         <span class="pl-c"># )</span>
@@ -593,11 +593,11 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 
         <span class="pl-k">try</span>:
             <span class="pl-c"># 等待并定位&lt;select&gt;元素</span>
-            <span class="pl-s1">select_element</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">20</span>).<span class="pl-en">until</span>(
-                <span class="pl-v">EC</span>.<span class="pl-en">presence_of_element_located</span>((<span class="pl-v">By</span>.<span class="pl-v">ID</span>, <span class="pl-s">'src_registry_id'</span>))
+            <span class="pl-s1">select_element</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">20</span>).<span class="pl-c1">until</span>(
+                <span class="pl-c1">EC</span>.<span class="pl-c1">presence_of_element_located</span>((<span class="pl-v">By</span>.<span class="pl-c1">ID</span>, <span class="pl-s">'src_registry_id'</span>))
             )
             <span class="pl-c"># 创建Select对象</span>
-            <span class="pl-s1">select</span> <span class="pl-c1">=</span> <span class="pl-v">Select</span>(<span class="pl-s1">select_element</span>)
+            <span class="pl-s1">select</span> <span class="pl-c1">=</span> <span class="pl-en">Select</span>(<span class="pl-s1">select_element</span>)
             <span class="pl-en">print</span>(<span class="pl-s">"找到了下拉列表"</span>)
 
         <span class="pl-k">except</span> <span class="pl-v">Exception</span> <span class="pl-k">as</span> <span class="pl-s1">e</span>:
@@ -606,7 +606,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
         <span class="pl-k">try</span>:
             <span class="pl-c"># 选择下拉列表中的第一个非空选项</span>
             <span class="pl-c"># 注意：这里的index是从0开始的，因此第一个非空选项的索引是1（假设第一个选项是占位符）</span>
-            <span class="pl-s1">select</span>.<span class="pl-en">select_by_index</span>(<span class="pl-c1">1</span>)
+            <span class="pl-s1">select</span>.<span class="pl-c1">select_by_index</span>(<span class="pl-c1">1</span>)
             <span class="pl-en">print</span>(<span class="pl-s">"选择了下拉列表的第一个非空选项"</span>)
 
         <span class="pl-k">except</span> <span class="pl-v">Exception</span> <span class="pl-k">as</span> <span class="pl-s1">e</span>:
@@ -617,18 +617,18 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <span class="pl-s">        """</span>
         <span class="pl-k">try</span>:
             <span class="pl-c"># 点击下拉列表以展开</span>
-            <span class="pl-s1">dropdown_tow</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">20</span>).<span class="pl-en">until</span>(
-                <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">ID</span>, <span class="pl-s">'dest_namespace_replace_count'</span>))
+            <span class="pl-s1">dropdown_tow</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">20</span>).<span class="pl-c1">until</span>(
+                <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">ID</span>, <span class="pl-s">'dest_namespace_replace_count'</span>))
             )
-            <span class="pl-s1">dropdown_tow</span>.<span class="pl-en">click</span>()
+            <span class="pl-s1">dropdown_tow</span>.<span class="pl-c1">click</span>()
             <span class="pl-en">print</span>(<span class="pl-s">"点击了下拉列表"</span>)
             <span class="pl-c"># 等待并选择“无替换”选项</span>
             <span class="pl-c"># 选择的 XPATH 必须匹配展开后的选项</span>
-            <span class="pl-s1">no_replace_option</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>,<span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-                <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>(
-                    (<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//select[@id="dest_namespace_replace_count"]/option[@value="0"]'</span>))
+            <span class="pl-s1">no_replace_option</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>,<span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+                <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>(
+                    (<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//select[@id="dest_namespace_replace_count"]/option[@value="0"]'</span>))
             )
-            <span class="pl-s1">no_replace_option</span>.<span class="pl-en">click</span>()
+            <span class="pl-s1">no_replace_option</span>.<span class="pl-c1">click</span>()
             <span class="pl-en">print</span>(<span class="pl-s">"选择了‘无替换’选项"</span>)
 
         <span class="pl-k">except</span> <span class="pl-v">Exception</span> <span class="pl-k">as</span> <span class="pl-s1">e</span>:
@@ -637,27 +637,27 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
         <span class="pl-s">"""</span>
 <span class="pl-s">        保存</span>
 <span class="pl-s">        """</span>
-        <span class="pl-s1">time</span>.<span class="pl-en">sleep</span>(<span class="pl-c1">5</span>)
-        <span class="pl-s1">save_button</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="ruleBtnOk"]'</span>))
+        <span class="pl-s1">time</span>.<span class="pl-c1">sleep</span>(<span class="pl-c1">5</span>)
+        <span class="pl-s1">save_button</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="ruleBtnOk"]'</span>))
         )
-        <span class="pl-s1">save_button</span>.<span class="pl-en">click</span>()
+        <span class="pl-s1">save_button</span>.<span class="pl-c1">click</span>()
         <span class="pl-c"># 提交复制功能</span>
-        <span class="pl-s1">replication_checkbox</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'/html/body/harbor-app/harbor-shell/clr-main-container/div/div/total-replication/div/hbr-replication/div/div[2]/hbr-list-replication-rule/div/clr-datagrid/div[1]/div/div/div/div/clr-dg-row/div/div[1]/div/clr-radio-wrapper/label'</span>))
+        <span class="pl-s1">replication_checkbox</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'/html/body/harbor-app/harbor-shell/clr-main-container/div/div/total-replication/div/hbr-replication/div/div[2]/hbr-list-replication-rule/div/clr-datagrid/div[1]/div/div/div/div/clr-dg-row/div/div[1]/div/clr-radio-wrapper/label'</span>))
         )
-        <span class="pl-s1">replication_checkbox</span>.<span class="pl-en">click</span>()
-        <span class="pl-s1">replicate_button</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="replication_exe_id"]'</span>))
+        <span class="pl-s1">replication_checkbox</span>.<span class="pl-c1">click</span>()
+        <span class="pl-s1">replicate_button</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="replication_exe_id"]'</span>))
         )
-        <span class="pl-s1">replicate_button</span>.<span class="pl-en">click</span>()
-        <span class="pl-s1">confirm_replicate_button</span> <span class="pl-c1">=</span> <span class="pl-v">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-en">until</span>(
-            <span class="pl-v">EC</span>.<span class="pl-en">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'/html/body/harbor-app/harbor-shell/clr-main-container/div/div/total-replication/div/hbr-replication/div/confirmation-dialog[1]/clr-modal/div/div[2]/div[2]/div/div[3]/button[2]'</span>))
+        <span class="pl-s1">replicate_button</span>.<span class="pl-c1">click</span>()
+        <span class="pl-s1">confirm_replicate_button</span> <span class="pl-c1">=</span> <span class="pl-en">WebDriverWait</span>(<span class="pl-s1">driver</span>, <span class="pl-c1">10</span>).<span class="pl-c1">until</span>(
+            <span class="pl-c1">EC</span>.<span class="pl-c1">element_to_be_clickable</span>((<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'/html/body/harbor-app/harbor-shell/clr-main-container/div/div/total-replication/div/hbr-replication/div/confirmation-dialog[1]/clr-modal/div/div[2]/div[2]/div/div[3]/button[2]'</span>))
         )
-        <span class="pl-s1">confirm_replicate_button</span>.<span class="pl-en">click</span>()
+        <span class="pl-s1">confirm_replicate_button</span>.<span class="pl-c1">click</span>()
 
 <span class="pl-k">if</span> <span class="pl-s1">__name__</span> <span class="pl-c1">==</span> <span class="pl-s">'__main__'</span>:
-    <span class="pl-s1">unittest</span>.<span class="pl-en">main</span>()</pre></div></div>
+    <span class="pl-s1">unittest</span>.<span class="pl-c1">main</span>()</pre></div></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

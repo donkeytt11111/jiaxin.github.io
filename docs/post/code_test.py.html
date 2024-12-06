@@ -180,7 +180,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <span class="pl-s">    发送验证码图片到AI模型进行识别，并返回识别结果</span>
 <span class="pl-s">    """</span>
     <span class="pl-k">with</span> <span class="pl-en">open</span>(<span class="pl-s1">image_path</span>, <span class="pl-s">"rb"</span>) <span class="pl-k">as</span> <span class="pl-s1">image_file</span>:
-        <span class="pl-s1">base64_image</span> <span class="pl-c1">=</span> <span class="pl-s1">base64</span>.<span class="pl-en">b64encode</span>(<span class="pl-s1">image_file</span>.<span class="pl-en">read</span>()).<span class="pl-en">decode</span>(<span class="pl-s">'utf-8'</span>)
+        <span class="pl-s1">base64_image</span> <span class="pl-c1">=</span> <span class="pl-s1">base64</span>.<span class="pl-c1">b64encode</span>(<span class="pl-s1">image_file</span>.<span class="pl-c1">read</span>()).<span class="pl-c1">decode</span>(<span class="pl-s">'utf-8'</span>)
     
     <span class="pl-s1">data</span> <span class="pl-c1">=</span> {
         <span class="pl-s">"model"</span>: <span class="pl-s1">model</span>,
@@ -191,78 +191,78 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     
     <span class="pl-k">while</span> <span class="pl-c1">True</span>:
         <span class="pl-k">try</span>:
-            <span class="pl-s1">response</span> <span class="pl-c1">=</span> <span class="pl-s1">requests</span>.<span class="pl-en">post</span>(<span class="pl-s1">api_url</span>, <span class="pl-s1">json</span><span class="pl-c1">=</span><span class="pl-s1">data</span>)
-            <span class="pl-k">if</span> <span class="pl-s1">response</span>.<span class="pl-s1">status_code</span> <span class="pl-c1">==</span> <span class="pl-c1">200</span>:
-                <span class="pl-s1">data</span> <span class="pl-c1">=</span> <span class="pl-s1">response</span>.<span class="pl-en">json</span>()
-                <span class="pl-k">if</span> <span class="pl-s">'response'</span> <span class="pl-c1">in</span> <span class="pl-s1">data</span> <span class="pl-c1">and</span> <span class="pl-s1">data</span>[<span class="pl-s">'response'</span>].<span class="pl-en">strip</span>():
-                    <span class="pl-s1">extracted_text</span> <span class="pl-c1">=</span> <span class="pl-s1">data</span>[<span class="pl-s">'response'</span>].<span class="pl-en">replace</span>(<span class="pl-s">" "</span>, <span class="pl-s">""</span>)
+            <span class="pl-s1">response</span> <span class="pl-c1">=</span> <span class="pl-s1">requests</span>.<span class="pl-c1">post</span>(<span class="pl-s1">api_url</span>, <span class="pl-s1">json</span><span class="pl-c1">=</span><span class="pl-s1">data</span>)
+            <span class="pl-k">if</span> <span class="pl-s1">response</span>.<span class="pl-c1">status_code</span> <span class="pl-c1">==</span> <span class="pl-c1">200</span>:
+                <span class="pl-s1">data</span> <span class="pl-c1">=</span> <span class="pl-s1">response</span>.<span class="pl-c1">json</span>()
+                <span class="pl-k">if</span> <span class="pl-s">'response'</span> <span class="pl-c1">in</span> <span class="pl-s1">data</span> <span class="pl-c1">and</span> <span class="pl-s1">data</span>[<span class="pl-s">'response'</span>].<span class="pl-c1">strip</span>():
+                    <span class="pl-s1">extracted_text</span> <span class="pl-c1">=</span> <span class="pl-s1">data</span>[<span class="pl-s">'response'</span>].<span class="pl-c1">replace</span>(<span class="pl-s">" "</span>, <span class="pl-s">""</span>)
                     <span class="pl-en">print</span>(<span class="pl-s">f"识别到的验证码: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">extracted_text</span><span class="pl-kos">}</span></span>"</span>)
                     <span class="pl-k">return</span> <span class="pl-s1">extracted_text</span>
                 <span class="pl-k">else</span>:
                     <span class="pl-en">print</span>(<span class="pl-s">"AI模型未返回有效的验证码，请重试。"</span>)
             <span class="pl-k">else</span>:
-                <span class="pl-en">print</span>(<span class="pl-s">f"错误: 接收到状态码 <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">response</span>.<span class="pl-s1">status_code</span><span class="pl-kos">}</span></span>"</span>)
+                <span class="pl-en">print</span>(<span class="pl-s">f"错误: 接收到状态码 <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">response</span>.<span class="pl-c1">status_code</span><span class="pl-kos">}</span></span>"</span>)
         <span class="pl-k">except</span> <span class="pl-v">Exception</span> <span class="pl-k">as</span> <span class="pl-s1">e</span>:
             <span class="pl-en">print</span>(<span class="pl-s">f"请求出错: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">e</span><span class="pl-kos">}</span></span>"</span>)
         
-        <span class="pl-s1">time</span>.<span class="pl-en">sleep</span>(<span class="pl-c1">2</span>)  <span class="pl-c"># 等待2秒后重试</span>
+        <span class="pl-s1">time</span>.<span class="pl-c1">sleep</span>(<span class="pl-c1">2</span>)  <span class="pl-c"># 等待2秒后重试</span>
 
 <span class="pl-k">def</span> <span class="pl-en">login</span>(<span class="pl-s1">url</span>, <span class="pl-s1">username</span>, <span class="pl-s1">password</span>):
     <span class="pl-s">"""</span>
 <span class="pl-s">    使用Selenium自动化登录，并在验证码识别失败时不断重试</span>
 <span class="pl-s">    """</span>
     <span class="pl-c"># 初始化浏览器</span>
-    <span class="pl-s1">options</span> <span class="pl-c1">=</span> <span class="pl-s1">webdriver</span>.<span class="pl-v">ChromeOptions</span>()
-    <span class="pl-s1">options</span>.<span class="pl-en">add_argument</span>(<span class="pl-s">"--start-maximized"</span>)
-    <span class="pl-s1">driver</span> <span class="pl-c1">=</span> <span class="pl-s1">webdriver</span>.<span class="pl-v">Chrome</span>(<span class="pl-s1">options</span><span class="pl-c1">=</span><span class="pl-s1">options</span>)
+    <span class="pl-s1">options</span> <span class="pl-c1">=</span> <span class="pl-s1">webdriver</span>.<span class="pl-c1">ChromeOptions</span>()
+    <span class="pl-s1">options</span>.<span class="pl-c1">add_argument</span>(<span class="pl-s">"--start-maximized"</span>)
+    <span class="pl-s1">driver</span> <span class="pl-c1">=</span> <span class="pl-s1">webdriver</span>.<span class="pl-c1">Chrome</span>(<span class="pl-s1">options</span><span class="pl-c1">=</span><span class="pl-s1">options</span>)
     
     <span class="pl-k">try</span>:
-        <span class="pl-s1">driver</span>.<span class="pl-en">get</span>(<span class="pl-s1">url</span>)
-        <span class="pl-s1">time</span>.<span class="pl-en">sleep</span>(<span class="pl-c1">5</span>)  <span class="pl-c"># 等待页面加载</span>
+        <span class="pl-s1">driver</span>.<span class="pl-c1">get</span>(<span class="pl-s1">url</span>)
+        <span class="pl-s1">time</span>.<span class="pl-c1">sleep</span>(<span class="pl-c1">5</span>)  <span class="pl-c"># 等待页面加载</span>
         
         <span class="pl-k">while</span> <span class="pl-c1">True</span>:
             <span class="pl-c"># 输入用户名</span>
-            <span class="pl-s1">username_field</span> <span class="pl-c1">=</span> <span class="pl-s1">driver</span>.<span class="pl-en">find_element</span>(<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="app"]/div/div/div[1]/div[2]/div[2]/form/div[1]/div/div[1]/input'</span>)
-            <span class="pl-s1">username_field</span>.<span class="pl-en">clear</span>()
-            <span class="pl-s1">username_field</span>.<span class="pl-en">send_keys</span>(<span class="pl-s1">username</span>)
-            <span class="pl-s1">time</span>.<span class="pl-en">sleep</span>(<span class="pl-c1">1</span>)
+            <span class="pl-s1">username_field</span> <span class="pl-c1">=</span> <span class="pl-s1">driver</span>.<span class="pl-c1">find_element</span>(<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="app"]/div/div/div[1]/div[2]/div[2]/form/div[1]/div/div[1]/input'</span>)
+            <span class="pl-s1">username_field</span>.<span class="pl-c1">clear</span>()
+            <span class="pl-s1">username_field</span>.<span class="pl-c1">send_keys</span>(<span class="pl-s1">username</span>)
+            <span class="pl-s1">time</span>.<span class="pl-c1">sleep</span>(<span class="pl-c1">1</span>)
             
             <span class="pl-c"># 输入密码</span>
-            <span class="pl-s1">password_field</span> <span class="pl-c1">=</span> <span class="pl-s1">driver</span>.<span class="pl-en">find_element</span>(<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="app"]/div/div/div[1]/div[2]/div[2]/form/div[2]/div/div/input'</span>)
-            <span class="pl-s1">password_field</span>.<span class="pl-en">clear</span>()
-            <span class="pl-s1">password_field</span>.<span class="pl-en">send_keys</span>(<span class="pl-s1">password</span>)
-            <span class="pl-s1">time</span>.<span class="pl-en">sleep</span>(<span class="pl-c1">1</span>)
+            <span class="pl-s1">password_field</span> <span class="pl-c1">=</span> <span class="pl-s1">driver</span>.<span class="pl-c1">find_element</span>(<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="app"]/div/div/div[1]/div[2]/div[2]/form/div[2]/div/div/input'</span>)
+            <span class="pl-s1">password_field</span>.<span class="pl-c1">clear</span>()
+            <span class="pl-s1">password_field</span>.<span class="pl-c1">send_keys</span>(<span class="pl-s1">password</span>)
+            <span class="pl-s1">time</span>.<span class="pl-c1">sleep</span>(<span class="pl-c1">1</span>)
             
             <span class="pl-c"># 获取并保存验证码图片</span>
-            <span class="pl-s1">captcha_element</span> <span class="pl-c1">=</span> <span class="pl-s1">driver</span>.<span class="pl-en">find_element</span>(<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="app"]/div/div/div[1]/div[2]/div[2]/form/div[3]/div/div[2]/img'</span>)
-            <span class="pl-s1">captcha_element</span>.<span class="pl-en">screenshot</span>(<span class="pl-s1">image_path</span>)
-            <span class="pl-s1">time</span>.<span class="pl-en">sleep</span>(<span class="pl-c1">1</span>)
+            <span class="pl-s1">captcha_element</span> <span class="pl-c1">=</span> <span class="pl-s1">driver</span>.<span class="pl-c1">find_element</span>(<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="app"]/div/div/div[1]/div[2]/div[2]/form/div[3]/div/div[2]/img'</span>)
+            <span class="pl-s1">captcha_element</span>.<span class="pl-c1">screenshot</span>(<span class="pl-s1">image_path</span>)
+            <span class="pl-s1">time</span>.<span class="pl-c1">sleep</span>(<span class="pl-c1">1</span>)
             
             <span class="pl-c"># 发送验证码识别请求</span>
             <span class="pl-s1">captcha_text</span> <span class="pl-c1">=</span> <span class="pl-en">send_captcha_request</span>(<span class="pl-s1">image_path</span>, <span class="pl-s1">api_url</span>)
             
             <span class="pl-c"># 输入验证码</span>
-            <span class="pl-s1">captcha_input</span> <span class="pl-c1">=</span> <span class="pl-s1">driver</span>.<span class="pl-en">find_element</span>(<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="app"]/div/div/div[1]/div[2]/div[2]/form/div[3]/div/div[1]/input'</span>)
-            <span class="pl-s1">captcha_input</span>.<span class="pl-en">clear</span>()
-            <span class="pl-s1">captcha_input</span>.<span class="pl-en">send_keys</span>(<span class="pl-s1">captcha_text</span>)
-            <span class="pl-s1">time</span>.<span class="pl-en">sleep</span>(<span class="pl-c1">1</span>)
+            <span class="pl-s1">captcha_input</span> <span class="pl-c1">=</span> <span class="pl-s1">driver</span>.<span class="pl-c1">find_element</span>(<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="app"]/div/div/div[1]/div[2]/div[2]/form/div[3]/div/div[1]/input'</span>)
+            <span class="pl-s1">captcha_input</span>.<span class="pl-c1">clear</span>()
+            <span class="pl-s1">captcha_input</span>.<span class="pl-c1">send_keys</span>(<span class="pl-s1">captcha_text</span>)
+            <span class="pl-s1">time</span>.<span class="pl-c1">sleep</span>(<span class="pl-c1">1</span>)
             
             <span class="pl-c"># 点击登录按钮</span>
-            <span class="pl-s1">login_button</span> <span class="pl-c1">=</span> <span class="pl-s1">driver</span>.<span class="pl-en">find_element</span>(<span class="pl-v">By</span>.<span class="pl-v">XPATH</span>, <span class="pl-s">'//*[@id="app"]/div/div/div[1]/div[2]/div[2]/form/button'</span>)
-            <span class="pl-s1">login_button</span>.<span class="pl-en">click</span>()
-            <span class="pl-s1">time</span>.<span class="pl-en">sleep</span>(<span class="pl-c1">5</span>)  <span class="pl-c"># 等待登录结果</span>
+            <span class="pl-s1">login_button</span> <span class="pl-c1">=</span> <span class="pl-s1">driver</span>.<span class="pl-c1">find_element</span>(<span class="pl-v">By</span>.<span class="pl-c1">XPATH</span>, <span class="pl-s">'//*[@id="app"]/div/div/div[1]/div[2]/div[2]/form/button'</span>)
+            <span class="pl-s1">login_button</span>.<span class="pl-c1">click</span>()
+            <span class="pl-s1">time</span>.<span class="pl-c1">sleep</span>(<span class="pl-c1">5</span>)  <span class="pl-c"># 等待登录结果</span>
             
             <span class="pl-c"># 判断是否登录成功</span>
             <span class="pl-c"># 这里需要根据实际情况修改，比如检查URL变化或特定元素是否存在</span>
-            <span class="pl-s1">page_title</span> <span class="pl-c1">=</span> <span class="pl-s1">driver</span>.<span class="pl-s1">title</span>
+            <span class="pl-s1">page_title</span> <span class="pl-c1">=</span> <span class="pl-s1">driver</span>.<span class="pl-c1">title</span>
             <span class="pl-k">if</span>  <span class="pl-s1">page_title</span> <span class="pl-c1">==</span> <span class="pl-s">'概要 - Ming Yang'</span>:
                 <span class="pl-en">print</span>(<span class="pl-s">"登录成功！"</span>)
                 <span class="pl-k">break</span>  <span class="pl-c"># 退出循环</span>
             <span class="pl-k">else</span>:
                 <span class="pl-en">print</span>(<span class="pl-s">"登录失败，可能是验证码识别错误，正在刷新验证码并重试..."</span>)
                 <span class="pl-c"># 点击验证码图片刷新</span>
-                <span class="pl-s1">captcha_element</span>.<span class="pl-en">click</span>()
-                <span class="pl-s1">time</span>.<span class="pl-en">sleep</span>(<span class="pl-c1">2</span>)  <span class="pl-c"># 等待验证码刷新</span>
+                <span class="pl-s1">captcha_element</span>.<span class="pl-c1">click</span>()
+                <span class="pl-s1">time</span>.<span class="pl-c1">sleep</span>(<span class="pl-c1">2</span>)  <span class="pl-c"># 等待验证码刷新</span>
     <span class="pl-k">except</span> <span class="pl-v">Exception</span> <span class="pl-k">as</span> <span class="pl-s1">e</span>:
         <span class="pl-en">print</span>(<span class="pl-s">f"发生错误: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">e</span><span class="pl-kos">}</span></span>"</span>)
     <span class="pl-k">finally</span>:
@@ -273,7 +273,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 
 <span class="pl-k">if</span> <span class="pl-s1">__name__</span> <span class="pl-c1">==</span> <span class="pl-s">"__main__"</span>:
     <span class="pl-en">login</span>(<span class="pl-s1">url</span>, <span class="pl-s1">username</span>, <span class="pl-s1">password</span>)
-    <span class="pl-s1">time</span>.<span class="pl-en">sleep</span>(<span class="pl-c1">10</span>)
+    <span class="pl-s1">time</span>.<span class="pl-c1">sleep</span>(<span class="pl-c1">10</span>)
 
 <span class="pl-s">``</span>`<span class="pl-s1">python</span></pre></div></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>

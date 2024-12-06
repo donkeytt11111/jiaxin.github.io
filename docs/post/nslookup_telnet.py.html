@@ -155,15 +155,15 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <span class="pl-k">import</span> <span class="pl-s1">logging</span>
 
 <span class="pl-c"># 日志配置</span>
-<span class="pl-s1">logging</span>.<span class="pl-en">basicConfig</span>(<span class="pl-s1">filename</span><span class="pl-c1">=</span><span class="pl-s">'dns_telnet.log'</span>, <span class="pl-s1">level</span><span class="pl-c1">=</span><span class="pl-s1">logging</span>.<span class="pl-v">INFO</span>)
+<span class="pl-s1">logging</span>.<span class="pl-c1">basicConfig</span>(<span class="pl-s1">filename</span><span class="pl-c1">=</span><span class="pl-s">'dns_telnet.log'</span>, <span class="pl-s1">level</span><span class="pl-c1">=</span><span class="pl-s1">logging</span>.<span class="pl-c1">INFO</span>)
 
 <span class="pl-k">def</span> <span class="pl-en">resolve_dns</span>(<span class="pl-s1">domain</span>, <span class="pl-s1">nameserver</span><span class="pl-c1">=</span><span class="pl-s">'114.114.114.114'</span>):
-    <span class="pl-s1">resolver</span> <span class="pl-c1">=</span> <span class="pl-s1">dns</span>.<span class="pl-s1">resolver</span>.<span class="pl-v">Resolver</span>(<span class="pl-s1">configure</span><span class="pl-c1">=</span><span class="pl-c1">False</span>)
-    <span class="pl-s1">resolver</span>.<span class="pl-s1">nameservers</span> <span class="pl-c1">=</span> [<span class="pl-s1">nameserver</span>]
+    <span class="pl-s1">resolver</span> <span class="pl-c1">=</span> <span class="pl-s1">dns</span>.<span class="pl-c1">resolver</span>.<span class="pl-c1">Resolver</span>(<span class="pl-s1">configure</span><span class="pl-c1">=</span><span class="pl-c1">False</span>)
+    <span class="pl-s1">resolver</span>.<span class="pl-c1">nameservers</span> <span class="pl-c1">=</span> [<span class="pl-s1">nameserver</span>]
 
     <span class="pl-k">try</span>:
-        <span class="pl-s1">a_records</span> <span class="pl-c1">=</span> <span class="pl-s1">resolver</span>.<span class="pl-en">resolve</span>(<span class="pl-s1">domain</span>, <span class="pl-s">'A'</span>)
-        <span class="pl-s1">aaaa_records</span> <span class="pl-c1">=</span> <span class="pl-s1">resolver</span>.<span class="pl-en">resolve</span>(<span class="pl-s1">domain</span>, <span class="pl-s">'AAAA'</span>)
+        <span class="pl-s1">a_records</span> <span class="pl-c1">=</span> <span class="pl-s1">resolver</span>.<span class="pl-c1">resolve</span>(<span class="pl-s1">domain</span>, <span class="pl-s">'A'</span>)
+        <span class="pl-s1">aaaa_records</span> <span class="pl-c1">=</span> <span class="pl-s1">resolver</span>.<span class="pl-c1">resolve</span>(<span class="pl-s1">domain</span>, <span class="pl-s">'AAAA'</span>)
 
         <span class="pl-en">print</span>(<span class="pl-s">f"正在解析 <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">domain</span><span class="pl-kos">}</span></span> 的DNS记录..."</span>)
         <span class="pl-en">print</span>(<span class="pl-s">f"A 记录: <span class="pl-s1"><span class="pl-kos">{</span>[<span class="pl-en">str</span>(<span class="pl-s1">rdata</span>) <span class="pl-k">for</span> <span class="pl-s1">rdata</span> <span class="pl-c1">in</span> <span class="pl-s1">a_records</span>]<span class="pl-kos">}</span></span>"</span>)
@@ -172,52 +172,52 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
         <span class="pl-k">return</span> {<span class="pl-s">'A'</span>: [<span class="pl-en">str</span>(<span class="pl-s1">rdata</span>) <span class="pl-k">for</span> <span class="pl-s1">rdata</span> <span class="pl-c1">in</span> <span class="pl-s1">a_records</span>],
                 <span class="pl-s">'AAAA'</span>: [<span class="pl-en">str</span>(<span class="pl-s1">rdata</span>) <span class="pl-k">for</span> <span class="pl-s1">rdata</span> <span class="pl-c1">in</span> <span class="pl-s1">aaaa_records</span>]}
     <span class="pl-k">except</span> <span class="pl-v">Exception</span> <span class="pl-k">as</span> <span class="pl-s1">e</span>:
-        <span class="pl-s1">logging</span>.<span class="pl-en">error</span>(<span class="pl-s">f"解析 <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">domain</span><span class="pl-kos">}</span></span> 失败: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">e</span><span class="pl-kos">}</span></span>"</span>)
+        <span class="pl-s1">logging</span>.<span class="pl-c1">error</span>(<span class="pl-s">f"解析 <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">domain</span><span class="pl-kos">}</span></span> 失败: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">e</span><span class="pl-kos">}</span></span>"</span>)
         <span class="pl-en">print</span>(<span class="pl-s">f"解析 <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">domain</span><span class="pl-kos">}</span></span> 失败: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">e</span><span class="pl-kos">}</span></span>"</span>)
         <span class="pl-k">return</span> {}
 
 <span class="pl-k">def</span> <span class="pl-en">check_port</span>(<span class="pl-s1">ip</span>, <span class="pl-s1">port</span><span class="pl-c1">=</span><span class="pl-c1">80</span>):
     <span class="pl-en">print</span>(<span class="pl-s">f"正在检查 IP <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">ip</span><span class="pl-kos">}</span></span> 的端口 <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">port</span><span class="pl-kos">}</span></span> 是否开放..."</span>)
     <span class="pl-k">try</span>:
-        <span class="pl-s1">tn</span> <span class="pl-c1">=</span> <span class="pl-s1">telnetlib</span>.<span class="pl-v">Telnet</span>(<span class="pl-s1">ip</span>, <span class="pl-s1">port</span>, <span class="pl-s1">timeout</span><span class="pl-c1">=</span><span class="pl-c1">5</span>)
-        <span class="pl-s1">tn</span>.<span class="pl-en">close</span>()
+        <span class="pl-s1">tn</span> <span class="pl-c1">=</span> <span class="pl-s1">telnetlib</span>.<span class="pl-c1">Telnet</span>(<span class="pl-s1">ip</span>, <span class="pl-s1">port</span>, <span class="pl-s1">timeout</span><span class="pl-c1">=</span><span class="pl-c1">5</span>)
+        <span class="pl-s1">tn</span>.<span class="pl-c1">close</span>()
         <span class="pl-en">print</span>(<span class="pl-s">f"IP <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">ip</span><span class="pl-kos">}</span></span> 的端口 <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">port</span><span class="pl-kos">}</span></span> 是开放的。"</span>)
         <span class="pl-k">return</span> <span class="pl-c1">True</span>
     <span class="pl-k">except</span> <span class="pl-v">Exception</span> <span class="pl-k">as</span> <span class="pl-s1">e</span>:
-        <span class="pl-s1">logging</span>.<span class="pl-en">error</span>(<span class="pl-s">f"连接到 <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">ip</span><span class="pl-kos">}</span></span>:<span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">port</span><span class="pl-kos">}</span></span> 失败: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">e</span><span class="pl-kos">}</span></span>"</span>)
+        <span class="pl-s1">logging</span>.<span class="pl-c1">error</span>(<span class="pl-s">f"连接到 <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">ip</span><span class="pl-kos">}</span></span>:<span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">port</span><span class="pl-kos">}</span></span> 失败: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">e</span><span class="pl-kos">}</span></span>"</span>)
         <span class="pl-en">print</span>(<span class="pl-s">f"连接到 <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">ip</span><span class="pl-kos">}</span></span>:<span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">port</span><span class="pl-kos">}</span></span> 失败: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">e</span><span class="pl-kos">}</span></span>"</span>)
         <span class="pl-k">return</span> <span class="pl-c1">False</span>
 
 <span class="pl-k">def</span> <span class="pl-en">update_excel</span>(<span class="pl-s1">excel_file</span>):
-    <span class="pl-s1">wb</span> <span class="pl-c1">=</span> <span class="pl-s1">openpyxl</span>.<span class="pl-en">load_workbook</span>(<span class="pl-s1">excel_file</span>)
-    <span class="pl-s1">sheet</span> <span class="pl-c1">=</span> <span class="pl-s1">wb</span>.<span class="pl-s1">active</span>
+    <span class="pl-s1">wb</span> <span class="pl-c1">=</span> <span class="pl-s1">openpyxl</span>.<span class="pl-c1">load_workbook</span>(<span class="pl-s1">excel_file</span>)
+    <span class="pl-s1">sheet</span> <span class="pl-c1">=</span> <span class="pl-s1">wb</span>.<span class="pl-c1">active</span>
 
-    <span class="pl-k">for</span> <span class="pl-s1">row</span> <span class="pl-c1">in</span> <span class="pl-s1">sheet</span>.<span class="pl-en">iter_rows</span>(<span class="pl-s1">min_row</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">values_only</span><span class="pl-c1">=</span><span class="pl-c1">True</span>):
+    <span class="pl-k">for</span> <span class="pl-s1">row</span> <span class="pl-c1">in</span> <span class="pl-s1">sheet</span>.<span class="pl-c1">iter_rows</span>(<span class="pl-s1">min_row</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">values_only</span><span class="pl-c1">=</span><span class="pl-c1">True</span>):
         <span class="pl-s1">url</span> <span class="pl-c1">=</span> <span class="pl-s1">row</span>[<span class="pl-c1">2</span>]
         <span class="pl-s1">parsed_url</span> <span class="pl-c1">=</span> <span class="pl-en">urlparse</span>(<span class="pl-s1">url</span>)
-        <span class="pl-s1">domain</span> <span class="pl-c1">=</span> <span class="pl-s1">parsed_url</span>.<span class="pl-s1">hostname</span>
-        <span class="pl-s1">port</span> <span class="pl-c1">=</span> <span class="pl-s1">parsed_url</span>.<span class="pl-s1">port</span> <span class="pl-c1">or</span> <span class="pl-c1">80</span>
+        <span class="pl-s1">domain</span> <span class="pl-c1">=</span> <span class="pl-s1">parsed_url</span>.<span class="pl-c1">hostname</span>
+        <span class="pl-s1">port</span> <span class="pl-c1">=</span> <span class="pl-s1">parsed_url</span>.<span class="pl-c1">port</span> <span class="pl-c1">or</span> <span class="pl-c1">80</span>
 
         <span class="pl-s1">records</span> <span class="pl-c1">=</span> <span class="pl-en">resolve_dns</span>(<span class="pl-s1">domain</span>)
         <span class="pl-s1">ipv4_status</span> <span class="pl-c1">=</span> <span class="pl-s">"否"</span>
         <span class="pl-s1">ipv6_status</span> <span class="pl-c1">=</span> <span class="pl-s">"否"</span>
 
-        <span class="pl-k">for</span> <span class="pl-s1">ip</span> <span class="pl-c1">in</span> <span class="pl-s1">records</span>.<span class="pl-en">get</span>(<span class="pl-s">'A'</span>, []):
+        <span class="pl-k">for</span> <span class="pl-s1">ip</span> <span class="pl-c1">in</span> <span class="pl-s1">records</span>.<span class="pl-c1">get</span>(<span class="pl-s">'A'</span>, []):
             <span class="pl-k">if</span> <span class="pl-en">check_port</span>(<span class="pl-s1">ip</span>, <span class="pl-s1">port</span>):
                 <span class="pl-s1">ipv4_status</span> <span class="pl-c1">=</span> <span class="pl-s">"是"</span>
                 <span class="pl-k">break</span>
 
-        <span class="pl-k">for</span> <span class="pl-s1">ip</span> <span class="pl-c1">in</span> <span class="pl-s1">records</span>.<span class="pl-en">get</span>(<span class="pl-s">'AAAA'</span>, []):
+        <span class="pl-k">for</span> <span class="pl-s1">ip</span> <span class="pl-c1">in</span> <span class="pl-s1">records</span>.<span class="pl-c1">get</span>(<span class="pl-s">'AAAA'</span>, []):
             <span class="pl-k">if</span> <span class="pl-en">check_port</span>(<span class="pl-s1">ip</span>, <span class="pl-s1">port</span>):
                 <span class="pl-s1">ipv6_status</span> <span class="pl-c1">=</span> <span class="pl-s">"是"</span>
                 <span class="pl-k">break</span>
 
         <span class="pl-c"># 更新Excel文件的结果</span>
         <span class="pl-s1">row_index</span> <span class="pl-c1">=</span> <span class="pl-s1">row</span>[<span class="pl-c1">0</span>]
-        <span class="pl-s1">sheet</span>.<span class="pl-en">cell</span>(<span class="pl-s1">row</span><span class="pl-c1">=</span><span class="pl-s1">row_index</span>, <span class="pl-s1">column</span><span class="pl-c1">=</span><span class="pl-c1">4</span>).<span class="pl-s1">value</span> <span class="pl-c1">=</span> <span class="pl-s1">ipv4_status</span>
-        <span class="pl-s1">sheet</span>.<span class="pl-en">cell</span>(<span class="pl-s1">row</span><span class="pl-c1">=</span><span class="pl-s1">row_index</span>, <span class="pl-s1">column</span><span class="pl-c1">=</span><span class="pl-c1">5</span>).<span class="pl-s1">value</span> <span class="pl-c1">=</span> <span class="pl-s1">ipv6_status</span>
+        <span class="pl-s1">sheet</span>.<span class="pl-c1">cell</span>(<span class="pl-s1">row</span><span class="pl-c1">=</span><span class="pl-s1">row_index</span>, <span class="pl-s1">column</span><span class="pl-c1">=</span><span class="pl-c1">4</span>).<span class="pl-c1">value</span> <span class="pl-c1">=</span> <span class="pl-s1">ipv4_status</span>
+        <span class="pl-s1">sheet</span>.<span class="pl-c1">cell</span>(<span class="pl-s1">row</span><span class="pl-c1">=</span><span class="pl-s1">row_index</span>, <span class="pl-s1">column</span><span class="pl-c1">=</span><span class="pl-c1">5</span>).<span class="pl-c1">value</span> <span class="pl-c1">=</span> <span class="pl-s1">ipv6_status</span>
 
-    <span class="pl-s1">wb</span>.<span class="pl-en">save</span>(<span class="pl-s">'new_'</span> <span class="pl-c1">+</span> <span class="pl-s1">excel_file</span>)
+    <span class="pl-s1">wb</span>.<span class="pl-c1">save</span>(<span class="pl-s">'new_'</span> <span class="pl-c1">+</span> <span class="pl-s1">excel_file</span>)
 
 <span class="pl-c"># 添加对urlparse的导入</span>
 <span class="pl-k">from</span> <span class="pl-s1">urllib</span>.<span class="pl-s1">parse</span> <span class="pl-k">import</span> <span class="pl-s1">urlparse</span>
