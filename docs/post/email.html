@@ -65,7 +65,7 @@ function send_config_files_by_email() {
 <meta property="og:url" content="https://donkeytt11111.github.io/jiaxin.github.io/post/email.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
 <title>email</title>
-<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
 
 
 </head>
@@ -89,17 +89,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     body {padding: 8px;}
     .postTitle{font-size:24px;}
 }
-.copy-feedback {
-    display: none;
-    position: absolute;
-    top: 10px;
-    right: 50px;
-    color: var(--color-fg-on-emphasis);
-    background-color: var(--color-fg-muted);
-    border-radius: 3px;
-    padding: 5px 8px;
-    font-size: 12px;
-}
+
 </style>
 
 
@@ -131,192 +121,193 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"><div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#!</span>/bin/bash</span>
+<div class="markdown-body" id="postBody"><pre lang="shell" class="notranslate"><code class="notranslate">#!/bin/bash
 
 
 
-<span class="pl-c"><span class="pl-c">#</span> 发送邮件方法</span>
-<span class="pl-k">function</span> <span class="pl-en">send_config_files_by_email()</span> {
-    project_name=<span class="pl-smi">$1</span>
+# 发送邮件方法
+function send_config_files_by_email() {
+    project_name=$1
 
-    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>请输入你部署的项目的名字，英文，若输入错误 请用ctrl+w撤回后重新输入<span class="pl-pds">"</span></span>
-    <span class="pl-c1">read</span> project_name
+    echo "请输入你部署的项目的名字，英文，若输入错误 请用ctrl+w撤回后重新输入"
+    read project_name
 
-    <span class="pl-c"><span class="pl-c">#</span> 定义接收者列表</span>
-    recipients=(<span class="pl-s"><span class="pl-pds">"</span>1553232697@qq.com<span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>18640549232@163.com<span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>442283241@qq.com<span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>2505584859@qq.com<span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>1223645860@qq.com<span class="pl-pds">"</span></span>)
+    # 定义接收者列表
+    recipients=("1553232697@qq.com" "18640549232@163.com" "442283241@qq.com" "2505584859@qq.com" "1223645860@qq.com")
 
-    <span class="pl-c"><span class="pl-c">#</span> 定义要发送的配置文件列表</span>
-    config_files=(<span class="pl-s"><span class="pl-pds">"</span>/root/.kube/config<span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>/root/.talos/config<span class="pl-pds">"</span></span>)
+    # 定义要发送的配置文件列表
+    config_files=("/root/.kube/config" "/root/.talos/config")
 
-    <span class="pl-c"><span class="pl-c">#</span> 安装msmtp和mailx</span>
-    <span class="pl-en">install_deps</span>() {
-        <span class="pl-k">if</span> <span class="pl-c1">command</span> -v yum <span class="pl-k">&amp;</span><span class="pl-k">&gt;</span> /dev/null<span class="pl-k">;</span> <span class="pl-k">then</span>
-            <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>正在为CentOS/RHEL系统安装必要软件...<span class="pl-pds">"</span></span>
+    # 安装msmtp和mailx
+    install_deps() {
+        if command -v yum &amp;&gt; /dev/null; then
+            echo "正在为CentOS/RHEL系统安装必要软件..."
             sudo yum install -y msmtp ca-certificates mailx
-        <span class="pl-k">else</span>
-            <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>无法识别的包管理器，请手动安装msmtp和mailx。<span class="pl-pds">"</span></span>
-        <span class="pl-k">fi</span>
+        else
+            echo "无法识别的包管理器，请手动安装msmtp和mailx。"
+        fi
     }
 
-<span class="pl-c"><span class="pl-c">#</span> 配置内容定义</span>
-config_addition=<span class="pl-s"><span class="pl-pds">$(</span>cat <span class="pl-s"><span class="pl-k">&lt;&lt;</span>'<span class="pl-k">EOF</span>'</span></span>
-<span class="pl-s"><span class="pl-s"># 邮箱</span></span>
-<span class="pl-s"><span class="pl-s">set from=15242422977@139.com</span></span>
-<span class="pl-s"><span class="pl-s"></span></span>
-<span class="pl-s"><span class="pl-s"># 使用SMTP发送邮件，需在邮箱设置中允许SMTP发送</span></span>
-<span class="pl-s"><span class="pl-s">set smtp=smtp.139.com</span></span>
-<span class="pl-s"><span class="pl-s"></span></span>
-<span class="pl-s"><span class="pl-s"># 邮箱用户名</span></span>
-<span class="pl-s"><span class="pl-s">set smtp-auth-user=15242422977@139.com</span></span>
-<span class="pl-s"><span class="pl-s"></span></span>
-<span class="pl-s"><span class="pl-s"># 邮箱授权码</span></span>
-<span class="pl-s"><span class="pl-s">set smtp-auth-password=9565c41108878bd25c00</span></span>
-<span class="pl-s"><span class="pl-s">set smtp-auth=login</span></span>
-<span class="pl-s"><span class="pl-s"></span></span>
-<span class="pl-s"><span class="pl-s"># 第二个账户配置</span></span>
-<span class="pl-s"><span class="pl-s">set from=18742423211@163.com</span></span>
-<span class="pl-s"><span class="pl-s">set smtp=smtp.163.com</span></span>
-<span class="pl-s"><span class="pl-s">set smtp-auth-user=18742423211@163.com</span></span>
-<span class="pl-s"><span class="pl-s">set smtp-auth-password=CCEARMNBAJVJHAKQ</span></span>
-<span class="pl-s"><span class="pl-s"><span class="pl-k">EOF</span></span></span>
-<span class="pl-s"><span class="pl-pds">)</span></span>
-<span class="pl-c"><span class="pl-c">#</span> 备份原文件</span>
-sudo cp /etc/mail.rc /etc/mail.rc.backup-<span class="pl-s"><span class="pl-pds">$(</span>date +%Y%m%d%H%M%S<span class="pl-pds">)</span></span>
+# 配置内容定义
+config_addition=$(cat &lt;&lt;'EOF'
+# 邮箱
+set from=15242422977@139.com
 
-<span class="pl-c"><span class="pl-c">#</span> 追加配置</span>
-<span class="pl-k">if</span> <span class="pl-k">!</span> sudo grep -qF <span class="pl-s"><span class="pl-pds">'</span>set from=15242422977@139.com<span class="pl-pds">'</span></span> /etc/mail.rc<span class="pl-k">;</span> <span class="pl-k">then</span>
-    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$config_addition</span><span class="pl-pds">"</span></span> <span class="pl-k">|</span> sudo tee -a /etc/mail.rc <span class="pl-k">&gt;</span> /dev/null
-    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>配置已成功追加到 /etc/mail.rc<span class="pl-pds">"</span></span>
-<span class="pl-k">else</span>
-    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>部分配置已存在，未进行追加操作以避免重复。<span class="pl-pds">"</span></span>
-<span class="pl-k">fi</span>
+# 使用SMTP发送邮件，需在邮箱设置中允许SMTP发送
+set smtp=smtp.139.com
+
+# 邮箱用户名
+set smtp-auth-user=15242422977@139.com
+
+# 邮箱授权码
+set smtp-auth-password=9565c41108878bd25c00
+set smtp-auth=login
+
+# 第二个账户配置
+set from=18742423211@163.com
+set smtp=smtp.163.com
+set smtp-auth-user=18742423211@163.com
+set smtp-auth-password=CCEARMNBAJVJHAKQ
+EOF
+)
+# 备份原文件
+sudo cp /etc/mail.rc /etc/mail.rc.backup-$(date +%Y%m%d%H%M%S)
+
+# 追加配置
+if ! sudo grep -qF 'set from=15242422977@139.com' /etc/mail.rc; then
+    echo "$config_addition" | sudo tee -a /etc/mail.rc &gt; /dev/null
+    echo "配置已成功追加到 /etc/mail.rc"
+else
+    echo "部分配置已存在，未进行追加操作以避免重复。"
+fi
 
 
-<span class="pl-c"><span class="pl-c">#</span> email方法</span>
-<span class="pl-en">send_email_with_attachment</span>() {
-    <span class="pl-k">local</span> attachment=<span class="pl-smi">$1</span>
-    <span class="pl-k">local</span> subject=<span class="pl-smi">$2</span>
-    <span class="pl-k">local</span> body=<span class="pl-smi">$3</span>
-    <span class="pl-k">local</span> recipients=(<span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${<span class="pl-k">@:</span>4}</span><span class="pl-pds">"</span></span>)
+# email方法
+send_email_with_attachment() {
+    local attachment=$1
+    local subject=$2
+    local body=$3
+    local recipients=("${@:4}")
 
-    <span class="pl-k">if</span> [ <span class="pl-k">-f</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$attachment</span><span class="pl-pds">"</span></span> ]<span class="pl-k">;</span> <span class="pl-k">then</span>
-        <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>正在发送附件到以下邮箱：<span class="pl-smi">${recipients[*]}</span>，邮件主题为：<span class="pl-smi">$subject</span>...<span class="pl-pds">"</span></span>
+    if [ -f "$attachment" ]; then
+        echo "正在发送附件到以下邮箱：${recipients[*]}，邮件主题为：$subject..."
 
         {
-            <span class="pl-c1">echo</span> -e <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$body</span>\n\n邮件包含附件。<span class="pl-pds">"</span></span>
-        } <span class="pl-k">|</span> mailx -s <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$subject</span><span class="pl-pds">"</span></span> \
+            echo -e "$body\n\n邮件包含附件。"
+        } | mailx -s "$subject" \
                  -S smtp=smtps://smtp.139.com:465 \
                  -S smtp-auth=login \
                  -S ssl-verify=ignore \
-                 -S from=<span class="pl-s"><span class="pl-pds">"</span>18742423211@139.com<span class="pl-pds">"</span></span> \
-                 -a <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$attachment</span><span class="pl-pds">"</span></span> \
-                 <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${recipients[@]}</span><span class="pl-pds">"</span></span>
+                 -S from="18742423211@139.com" \
+                 -a "$attachment" \
+                 "${recipients[@]}"
 
-        <span class="pl-k">if</span> [ <span class="pl-smi">$?</span> <span class="pl-k">-eq</span> 0 ]<span class="pl-k">;</span> <span class="pl-k">then</span>
-            <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>邮件（主题：<span class="pl-smi">$subject</span>）成功发送至所有接收者。<span class="pl-pds">"</span></span>
-        <span class="pl-k">else</span>
-            <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>邮件（主题：<span class="pl-smi">$subject</span>）发送失败，请检查配置后重试。<span class="pl-pds">"</span></span>
-        <span class="pl-k">fi</span>
-    <span class="pl-k">else</span>
-        <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>附件文件不存在，跳过发送。<span class="pl-pds">"</span></span>
-    <span class="pl-k">fi</span>
+        if [ $? -eq 0 ]; then
+            echo "邮件（主题：$subject）成功发送至所有接收者。"
+        else
+            echo "邮件（主题：$subject）发送失败，请检查配置后重试。"
+        fi
+    else
+        echo "附件文件不存在，跳过发送。"
+    fi
 }
 
-    <span class="pl-c"><span class="pl-c">#</span> 从控制台动态获取邮箱地址</span>
-    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>请输入额外的收件人邮箱地址: 如果不需要额外发送其他邮箱，请直接回车<span class="pl-pds">"</span></span>
-    <span class="pl-c1">read</span> additional_recipient
+    # 从控制台动态获取邮箱地址
+    echo "请输入额外的收件人邮箱地址: 如果不需要额外发送其他邮箱，请直接回车"
+    read additional_recipient
 
-    <span class="pl-c"><span class="pl-c">#</span> 将用户输入的邮箱地址添加到收件人列表</span>
-    <span class="pl-k">if</span> [[ <span class="pl-k">-n</span> <span class="pl-smi">$additional_recipient</span> ]]<span class="pl-k">;</span> <span class="pl-k">then</span>
-        recipients+=(<span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$additional_recipient</span><span class="pl-pds">"</span></span>)
-    <span class="pl-k">fi</span>
+    # 将用户输入的邮箱地址添加到收件人列表
+    if [[ -n $additional_recipient ]]; then
+        recipients+=("$additional_recipient")
+    fi
 
-    <span class="pl-c"><span class="pl-c">#</span> 定义自定义邮件正文内容</span>
-    k8s_body=<span class="pl-s"><span class="pl-pds">"</span>这是Kubernetes配置文件... 项目名为：<span class="pl-smi">$project_name</span><span class="pl-pds">"</span></span>
-    talos_body=<span class="pl-s"><span class="pl-pds">"</span>这是Talos系统配置文件... 项目名为：<span class="pl-smi">$project_name</span><span class="pl-pds">"</span></span>
+    # 定义自定义邮件正文内容
+    k8s_body="这是Kubernetes配置文件... 项目名为：$project_name"
+    talos_body="这是Talos系统配置文件... 项目名为：$project_name"
 
-    <span class="pl-c"><span class="pl-c">#</span> 遍历配置文件列表并发送邮件，同时附带自定义邮件正文</span>
-    <span class="pl-k">for</span> <span class="pl-smi">config_file</span> <span class="pl-k">in</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${config_files[@]}</span><span class="pl-pds">"</span></span><span class="pl-k">;</span> <span class="pl-k">do</span>
-        <span class="pl-k">case</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$config_file</span><span class="pl-pds">"</span></span> <span class="pl-k">in</span>
-            <span class="pl-s"><span class="pl-pds">"</span>/root/.kube/config<span class="pl-pds">"</span></span>)
-                send_email_with_attachment <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$config_file</span><span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>Kubernetes Config 文件 项目名为：<span class="pl-smi">$project_name</span><span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$k8s_body</span><span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${recipients[@]}</span><span class="pl-pds">"</span></span>
+    # 遍历配置文件列表并发送邮件，同时附带自定义邮件正文
+    for config_file in "${config_files[@]}"; do
+        case "$config_file" in
+            "/root/.kube/config")
+                send_email_with_attachment "$config_file" "Kubernetes Config 文件 项目名为：$project_name" "$k8s_body" "${recipients[@]}"
                 ;;
-            <span class="pl-s"><span class="pl-pds">"</span>/root/.talos/config<span class="pl-pds">"</span></span>)
-                send_email_with_attachment <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$config_file</span><span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>Talos System Config 文件 项目名为：<span class="pl-smi">$project_name</span><span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$talos_body</span><span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${recipients[@]}</span><span class="pl-pds">"</span></span>
+            "/root/.talos/config")
+                send_email_with_attachment "$config_file" "Talos System Config 文件 项目名为：$project_name" "$talos_body" "${recipients[@]}"
                 ;;
-            <span class="pl-k">*</span>)
-                <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>未知的配置文件：<span class="pl-smi">$config_file</span>，跳过发送。<span class="pl-pds">"</span></span>
+            *)
+                echo "未知的配置文件：$config_file，跳过发送。"
                 ;;
-        <span class="pl-k">esac</span>
-    <span class="pl-k">done</span>
+        esac
+    done
 
-<span class="pl-c"><span class="pl-c">#</span> 打包并发送目录中的所有文件</span>
-<span class="pl-en">zip_and_send</span>() {
-    <span class="pl-k">local</span> directory=<span class="pl-smi">$1</span>
-    <span class="pl-k">local</span> zipfile=<span class="pl-s"><span class="pl-pds">$(</span>mktemp<span class="pl-pds">)</span></span>.zip
-    <span class="pl-k">local</span> tempdir=<span class="pl-s"><span class="pl-pds">$(</span>mktemp -d<span class="pl-pds">)</span></span>
+# 打包并发送目录中的所有文件
+zip_and_send() {
+    local directory=$1
+    local zipfile=$(mktemp).zip
+    local tempdir=$(mktemp -d)
 
-    <span class="pl-c"><span class="pl-c">#</span> 检查目录下是否有文件</span>
-    <span class="pl-k">if</span> find <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$directory</span><span class="pl-pds">"</span></span> -maxdepth 1 -type f -print0 <span class="pl-k">|</span> xargs -0 ls <span class="pl-k">|</span> grep -q <span class="pl-c1">.</span><span class="pl-k">;</span> <span class="pl-k">then</span>
-    <span class="pl-c"><span class="pl-c">#</span>if find "$directory" -maxdepth 1 -type f | grep -q .; then</span>
-        cp -r <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$directory</span><span class="pl-pds">"</span></span>/<span class="pl-k">*</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$tempdir</span><span class="pl-pds">"</span></span> <span class="pl-k">&amp;&amp;</span> (cd <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$tempdir</span><span class="pl-pds">"</span></span> <span class="pl-k">&amp;&amp;</span> zip -r <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$zipfile</span><span class="pl-pds">"</span></span> <span class="pl-k">*</span>) <span class="pl-c"><span class="pl-c">#</span> 修改这里</span>
-        <span class="pl-k">if</span> [ <span class="pl-smi">$?</span> <span class="pl-k">-eq</span> 0 ]<span class="pl-k">;</span> <span class="pl-k">then</span>
-            <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>打包文件成功，准备发送邮件...<span class="pl-pds">"</span></span>
-            send_email_with_attachment <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$zipfile</span><span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>附件来自：<span class="pl-smi">$directory</span><span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>这是来自目录的打包文件。<span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${recipients[@]}</span><span class="pl-pds">"</span></span>
-        <span class="pl-k">else</span>
-            <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>打包文件失败：<span class="pl-smi">$directory</span><span class="pl-pds">"</span></span>
-        <span class="pl-k">fi</span>
-    <span class="pl-k">else</span>
-        <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>目录下没有文件，跳过打包。<span class="pl-pds">"</span></span>
-        <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>请重新输入一个包含文件的目录。<span class="pl-pds">"</span></span>
-        <span class="pl-c1">read</span> new_directory
-        directory=<span class="pl-smi">${new_directory<span class="pl-k">:-</span><span class="pl-smi">$directory</span>}</span>
-        zip_and_send <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$directory</span><span class="pl-pds">"</span></span>
-    <span class="pl-k">fi</span>
+    # 检查目录下是否有文件
+    if find "$directory" -maxdepth 1 -type f -print0 | xargs -0 ls | grep -q .; then
+    #if find "$directory" -maxdepth 1 -type f | grep -q .; then
+        cp -r "$directory"/* "$tempdir" &amp;&amp; (cd "$tempdir" &amp;&amp; zip -r "$zipfile" *) # 修改这里
+        if [ $? -eq 0 ]; then
+            echo "打包文件成功，准备发送邮件..."
+            send_email_with_attachment "$zipfile" "附件来自：$directory" "这是来自目录的打包文件。" "${recipients[@]}"
+        else
+            echo "打包文件失败：$directory"
+        fi
+    else
+        echo "目录下没有文件，跳过打包。"
+        echo "请重新输入一个包含文件的目录。"
+        read new_directory
+        directory=${new_directory:-$directory}
+        zip_and_send "$directory"
+    fi
 
-    rm -rf <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$tempdir</span><span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$zipfile</span><span class="pl-pds">"</span></span>
+    rm -rf "$tempdir" "$zipfile"
 }
 
-<span class="pl-c"><span class="pl-c">#</span> 从控制台动态获取邮箱地址</span>
-<span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>请输入额外的收件人邮箱地址: 如果不需要额外发送其他邮箱，请直接回车<span class="pl-pds">"</span></span>
-<span class="pl-c1">read</span> additional_recipient
+# 从控制台动态获取邮箱地址
+echo "请输入额外的收件人邮箱地址: 如果不需要额外发送其他邮箱，请直接回车"
+read additional_recipient
 
-<span class="pl-c"><span class="pl-c">#</span> 将用户输入的邮箱地址添加到收件人列表</span>
-<span class="pl-k">if</span> [[ <span class="pl-k">-n</span> <span class="pl-smi">$additional_recipient</span> ]]<span class="pl-k">;</span> <span class="pl-k">then</span>
-    recipients+=(<span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$additional_recipient</span><span class="pl-pds">"</span></span>)
-<span class="pl-k">fi</span>
+# 将用户输入的邮箱地址添加到收件人列表
+if [[ -n $additional_recipient ]]; then
+    recipients+=("$additional_recipient")
+fi
 
-<span class="pl-c"><span class="pl-c">#</span> 获取用户输入的目录路径，如果没有输入则使用默认的/opt路径</span>
-<span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>请输入要打包的目录路径（直接回车使用默认路径 /opt）:<span class="pl-pds">"</span></span>
-<span class="pl-c1">read</span> directory
-directory=<span class="pl-smi">${directory<span class="pl-k">:-/</span>opt}</span> <span class="pl-c"><span class="pl-c">#</span> 如果directory为空，则设置为默认值"/opt"</span>
+# 获取用户输入的目录路径，如果没有输入则使用默认的/opt路径
+echo "请输入要打包的目录路径（直接回车使用默认路径 /opt）:"
+read directory
+directory=${directory:-/opt} # 如果directory为空，则设置为默认值"/opt"
 
-<span class="pl-c"><span class="pl-c">#</span> 检查目录是否存在并打包发送</span>
-<span class="pl-c"><span class="pl-c">#</span> 获取用户输入的目录路径，如果直接回车则提示重新输入，直到提供有效路径</span>
-<span class="pl-k">while</span> <span class="pl-c1">true</span><span class="pl-k">;</span> <span class="pl-k">do</span>
-    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>请输入要打包的目录路径（直接回车将要求重新输入）:<span class="pl-pds">"</span></span>
-    <span class="pl-c1">read</span> directory
-    <span class="pl-k">if</span> [ <span class="pl-k">-z</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$directory</span><span class="pl-pds">"</span></span> ]<span class="pl-k">;</span> <span class="pl-k">then</span>
-        <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>目录路径不能为空，请重新输入。<span class="pl-pds">"</span></span>
-    <span class="pl-k">elif</span> [ <span class="pl-k">!</span> <span class="pl-k">-d</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$directory</span><span class="pl-pds">"</span></span> ]<span class="pl-k">;</span> <span class="pl-k">then</span>
-        <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>目录不存在：<span class="pl-smi">$directory</span>，请重新输入正确的目录路径。<span class="pl-pds">"</span></span>
-    <span class="pl-k">else</span>
-        <span class="pl-c1">break</span>
-    <span class="pl-k">fi</span>
-<span class="pl-k">done</span>
+# 检查目录是否存在并打包发送
+# 获取用户输入的目录路径，如果直接回车则提示重新输入，直到提供有效路径
+while true; do
+    echo "请输入要打包的目录路径（直接回车将要求重新输入）:"
+    read directory
+    if [ -z "$directory" ]; then
+        echo "目录路径不能为空，请重新输入。"
+    elif [ ! -d "$directory" ]; then
+        echo "目录不存在：$directory，请重新输入正确的目录路径。"
+    else
+        break
+    fi
+done
 
-<span class="pl-c"><span class="pl-c">#</span> 确保目录非默认且存在后，再执行打包逻辑</span>
-<span class="pl-k">if</span> [ <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$directory</span><span class="pl-pds">"</span></span> <span class="pl-k">!=</span> <span class="pl-s"><span class="pl-pds">"</span>/opt<span class="pl-pds">"</span></span> ]<span class="pl-k">;</span> <span class="pl-k">then</span>
-    zip_and_send <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$directory</span><span class="pl-pds">"</span></span>
-<span class="pl-k">else</span>
-    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>警告：/opt 是默认路径，已跳过自动打包。如需打包，请明确指定其他非默认目录。<span class="pl-pds">"</span></span>
-<span class="pl-k">fi</span>
+# 确保目录非默认且存在后，再执行打包逻辑
+if [ "$directory" != "/opt" ]; then
+    zip_and_send "$directory"
+else
+    echo "警告：/opt 是默认路径，已跳过自动打包。如需打包，请明确指定其他非默认目录。"
+fi
 
 }
 
-send_config_files_by_email <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$1</span><span class="pl-pds">"</span></span>
+send_config_files_by_email "$1"
 
-<span class="pl-c1">exit</span> 0</pre></div></div>
+exit 0
+</code></pre></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
@@ -341,7 +332,7 @@ if(""!=""){
 </script></div>
 </body>
 <script>
-var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
 var utterancesLoad=0;
 
 let themeSettings={
@@ -414,70 +405,7 @@ function iFrameLoading(){
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const createClipboardHTML = (codeContent, additionalClasses = '') => `
-        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
-        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
-            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
-                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
-                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
-            </clipboard-copy>
-            <div class="copy-feedback">Copied!</div>
-        </div>
-    `;
 
-    const handleCodeElements = (selector = '') => {
-        document.querySelectorAll(selector).forEach(codeElement => {
-            const codeContent = codeElement.innerHTML;
-            const newStructure = document.createElement('div');
-            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
-            newStructure.innerHTML = createClipboardHTML(codeContent);
-
-            const parentElement = codeElement.parentElement;
-            if (selector.includes('highlight')) {
-                parentElement.insertBefore(newStructure, codeElement.nextSibling);
-                parentElement.removeChild(codeElement);
-            } else {
-                parentElement.parentElement.replaceChild(newStructure, parentElement);
-            }
-        });
-    };
-
-    handleCodeElements('pre.notranslate > code.notranslate');
-    handleCodeElements('div.highlight > pre.notranslate');
-
-    let currentFeedback = null;
-    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
-        copyButton.addEventListener('click', () => {
-            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
-            const tempTextArea = document.createElement('textarea');
-            tempTextArea.value = codeContent;
-            document.body.appendChild(tempTextArea);
-            tempTextArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempTextArea);
-
-            const copyIcon = copyButton.querySelector('.octicon-copy');
-            const checkIcon = copyButton.querySelector('.octicon-check');
-            const copyFeedback = copyButton.nextElementSibling;
-
-            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
-            currentFeedback = copyFeedback;
-
-            copyIcon.classList.add('d-none');
-            checkIcon.classList.remove('d-none');
-            copyFeedback.style.display = 'block';
-            copyButton.style.borderColor = 'var(--color-success-fg)';
-
-            setTimeout(() => {
-                copyIcon.classList.remove('d-none');
-                checkIcon.classList.add('d-none');
-                copyFeedback.style.display = 'none';
-                copyButton.style.borderColor = '';
-            }, 2000);
-        });
-    });
-});
 
 </script>
 
